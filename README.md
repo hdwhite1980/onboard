@@ -23,7 +23,7 @@ From the latest extracted repository ZIP, run `bash Diagnose.command`. It report
 
 ## Service controls
 
-Use **AI Settings → Stop service** to stop the current or a verified older Onboard host. The app displays progress and checks that shutdown completed. **Start service** automatically recovers an idle verified older host occupying the address. Other applications are left running. Updated setup includes this recovery and preserves verified existing model/runtime files and settings.
+Use **AI Settings → Stop service** to stop the current or a verified older Onboard host. The app displays progress and checks that shutdown completed. **Start service** automatically recovers an idle verified older host occupying the address. A service using a previous installation folder can be recovered when its original live lock and remaining identity checks verify. Other applications are left running. Updated setup includes this recovery and preserves verified existing model/runtime files and settings.
 
 ## Browser choice
 

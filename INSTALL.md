@@ -105,3 +105,9 @@ This checks the source archive and runs read-only inspection. It does not instal
 The verifier now asks Apple's trusted Python launcher for its kernel-reported executable instead of assuming a particular Xcode directory or executable name. It compares that exact path with the running host. A same-named Python elsewhere is insufficient; app signature, identity, ownership, deployment and process start-time checks still apply.
 
 If diagnostics reports a verified Onboard host, run `bash Setup.command` from this latest folder to install the corrected controls. If it reports `APP_BUNDLE_MISSING`, the service still references a removed/moved app; restart the Mac before retrying. Other failures now identify their check, including `PYTHON_EXECUTABLE_MISMATCH`, `APP_SIGNATURE_INVALID`, `DEPLOYMENT_MISMATCH` and `APP_OWNER_MISMATCH`. Share the diagnostic result to resolve the failing check rather than repeatedly deleting or reinstalling the app.
+
+## Recover a service started before the installation folder changed
+
+An app update can leave an older service running with the previous state-folder path. The verifier now accepts that specific state mismatch only when the running process still holds its original same-user `service.lock`, its signed Onboard bundle and interpreter verify, and its launch arguments match the expected host and port. A leftover lock file, a symlink, or a lock held by another process is insufficient.
+
+The latest setup and Start/Stop controls use this recovery. Quit the Onboard app window, download and extract the latest repository ZIP, and run `bash Setup.command` from that folder. The helper can stop the verified older host before updating the app. It leaves the older state folder intact. Active model child processes still require waiting for the request to finish before shutdown.
