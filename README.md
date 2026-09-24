@@ -17,6 +17,10 @@ The default installation folder is `~/OnboardAI`; keep it in place. Setup detect
 
 If an earlier setup stopped with “Packaged Python identity did not match,” use the recovery command in [INSTALL.md](INSTALL.md). The fixed installer carries the exact qualified Python executable, verifies its existing hash/signature, and can reuse checked downloads from the earlier folder.
 
+## Diagnose a service problem
+
+From the latest extracted repository ZIP, run `bash Diagnose.command`. It reports the exact verification failure without installing, starting, stopping, or downloading anything. Share the result if Start or Stop service reports an older-installation verification failure.
+
 ## Service controls
 
 Use **AI Settings → Stop service** to stop the current or a verified older Onboard host. The app displays progress and checks that shutdown completed. **Start service** automatically recovers an idle verified older host occupying the address. Other applications are left running. Updated setup includes this recovery and preserves verified existing model/runtime files and settings.

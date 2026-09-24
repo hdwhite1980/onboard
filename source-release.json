@@ -1,8 +1,8 @@
 {
   "archive": "Onboard-Source.zip",
-  "sha256": "94d2907ae70c66393f2feb5842b1b0507c6eb7c29019088fa272218b3c8c8d18",
-  "bytes": 8220006,
-  "sourceFiles": 297,
+  "sha256": "f091787135b9270aaa72d61cfb88ce12bdbcedaa03e6c9c5d791c79fd4c65341",
+  "bytes": 8223559,
+  "sourceFiles": 298,
   "model": "mlx-community/Qwen3-1.7B-4bit",
   "modelRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
   "modelManifestSHA256": "1721e23c79d4367cb3e12a6811aabd61a8526c511b0f30f7134ecaeb40ef0778",

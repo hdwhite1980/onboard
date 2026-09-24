@@ -91,3 +91,17 @@ The updater uses the same verified shutdown helper before replacing existing sou
 Keep the managed installation folder (normally `~/OnboardAI`). When the app is missing and the installation has no active service lock, setup continues without calling the missing app or requiring a successful Stop operation. Leftover socket and lock files alone do not block installation. Your settings and checked runtime/model files are preserved.
 
 If the deleted app's background service is still holding the installation lock, restart the Mac and rerun `bash Setup.command` from the latest extracted repository ZIP. Restarting clears that process; setup does not force-stop an unverifiable process whose app bundle has been deleted. If Onboard's window is still running, quit it first.
+
+## Diagnose Start/Stop verification failures without reinstalling
+
+Download and extract the latest repository ZIP, then run this from that folder:
+
+```sh
+bash Diagnose.command
+```
+
+This checks the source archive and runs read-only inspection. It does not install prerequisites, download models, start services, stop processes or change settings. The result lists listener/lock-owner PIDs, executable paths and the specific verification result. It does not collect credentials, prompts or process environments. Local file paths can include your macOS username.
+
+The verifier now asks Apple's trusted Python launcher for its kernel-reported executable instead of assuming a particular Xcode directory or executable name. It compares that exact path with the running host. A same-named Python elsewhere is insufficient; app signature, identity, ownership, deployment and process start-time checks still apply.
+
+If diagnostics reports a verified Onboard host, run `bash Setup.command` from this latest folder to install the corrected controls. If it reports `APP_BUNDLE_MISSING`, the service still references a removed/moved app; restart the Mac before retrying. Other failures now identify their check, including `PYTHON_EXECUTABLE_MISMATCH`, `APP_SIGNATURE_INVALID`, `DEPLOYMENT_MISMATCH` and `APP_OWNER_MISMATCH`. Share the diagnostic result to resolve the failing check rather than repeatedly deleting or reinstalling the app.

@@ -112,7 +112,7 @@ def prepare_update(destination,archive=None):
         else:raise RuntimeError('The old service is still shutting down. Retry setup after it stops.')
     if archive is not None:stop_previous_from_archive(archive,destination)
 
-def stop_previous_from_archive(archive,destination):
+def stop_previous_from_archive(archive,destination,diagnose=False):
     # main verified the release ZIP; check its helper against the inventory before execution.
     name='product/integrated/service/service_control.py'
     with zipfile.ZipFile(archive) as z:
@@ -120,7 +120,10 @@ def stop_previous_from_archive(archive,destination):
         if hashlib.sha256(data).hexdigest()!=row['sha256'] or len(data)!=row['bytes']:raise RuntimeError('Service control helper failed source verification.')
     with tempfile.TemporaryDirectory(prefix='onboard-update-control-') as folder:
         helper=pathlib.Path(folder)/'service_control.py';helper.write_bytes(data)
-        result=subprocess.run([sys.executable,'-I','-B',str(helper),'--state',str(destination/'product/integrated/state')],capture_output=True,text=True,timeout=40)
+        command=[sys.executable,'-I','-B',str(helper),'--state',str(destination/'product/integrated/state')]
+        if diagnose:command.append('--diagnose')
+        result=subprocess.run(command,capture_output=True,text=True,timeout=40)
+        if diagnose:print(result.stdout,flush=True)
         if result.returncode:raise RuntimeError(result.stderr.strip() or 'Could not stop the old Onboard service; existing files are unchanged.')
 
 def configure_network(explicit_proxy=''):
@@ -181,13 +184,15 @@ def ensure_rust(opener):
     if not rust_ready():raise RuntimeError('Rust did not become usable. Check the installation output before retrying.')
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path);ap.add_argument('--plan',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');ap.add_argument('--cache-root',type=pathlib.Path);args=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path);ap.add_argument('--plan',action='store_true');ap.add_argument('--diagnose-service',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');ap.add_argument('--cache-root',type=pathlib.Path);args=ap.parse_args()
     folder=pathlib.Path(__file__).resolve().parent;release=json.loads((folder/'source-release.json').read_text());archive=folder/release['archive']
     if archive.name!=release['archive'] or digest(archive)!=release['sha256']:raise RuntimeError('The source archive failed verification. Download the repository again.')
     if args.plan:print(json.dumps(release,indent=2));return
     if platform.system()!='Darwin' or platform.machine()!='arm64' or int(platform.mac_ver()[0].split('.')[0])<26:raise RuntimeError('This setup requires Apple silicon and macOS 26 or later. Windows and Intel Mac installers are not available.')
-    subprocess.run(['/usr/bin/xcrun','--find','swiftc'],check=True,stdout=subprocess.DEVNULL)
     destination=installation_destination(args.destination)
+    if args.diagnose_service:
+        stop_previous_from_archive(archive,destination,diagnose=True);return
+    subprocess.run(['/usr/bin/xcrun','--find','swiftc'],check=True,stdout=subprocess.DEVNULL)
     print("Using installation folder: "+str(destination),flush=True)
     if len(str(destination/'product/integrated/state/native.sock').encode())>103:raise RuntimeError('Choose a shorter destination, such as ~/OnboardAI.')
     if shutil.disk_usage(pathlib.Path.home()).free<2*1024**3:raise RuntimeError('At least 2 GiB free disk space is required for update/build staging; missing downloads need additional space.')
