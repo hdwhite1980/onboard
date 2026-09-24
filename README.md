@@ -1,22 +1,43 @@
-# Onboard AI — Outlook and Teams development add-ins
+# Onboard AI
 
-This folder contains the current development packages and their web assets. It does not contain the macOS app, AI models, account configuration, credentials, or private service state.
+Onboard AI combines a native macOS Ask AI dashboard, a shared local AI service, Outlook and Teams add-ins, and settings for Microsoft 365, public web search and optional GenAI API connections.
 
-## Files
+## Install on another Mac
 
-- `outlook.xml`: Outlook add-in manifest.
-- `Onboard-Teams.zip`: Teams app package; retain this ZIP intact when distributing the Teams package.
-- `Onboard-Web-Assets.zip`: packaged web interface assets.
-- `web/`: the same HTML, JavaScript, CSS and images as unpacked files.
-- `deployment-status.json`: current deployment limitations.
-- `SHA256SUMS.txt`: checksums of this upload set, excluding the checksum file itself.
+Start with **[INSTALL.md](INSTALL.md)**. Download this repository using **Code → Download ZIP**, extract it, open Terminal in the extracted folder and run:
 
-## Current status
+```sh
+bash Setup.command --plan
+bash Setup.command
+```
 
-These packages point to `https://localhost:38473` and depend on the installed Onboard AI local service. They have not been deployed or verified inside the owner's Outlook, Teams or government tenant. The development certificate is not automatically trusted. Microsoft host/schema validation, approved certificate/hosting arrangements, tenant deployment, and live connection testing remain required.
+The current setup is a **development source installer for Apple silicon on macOS 26 or later**, requiring Apple's command-line developer tools and Rust. It downloads the exact Qwen3-1.7B model and runtime dependencies, verifies SHA-256 checksums, performs fresh local worker/monitor checks, builds the app and installs it for the current user. Approximately **1.42 GB** is downloaded, plus any missing Rust build dependencies. The model then stays on the Mac for offline local AI. This is not a notarized customer installer; Windows and Intel Mac builds are not provided.
 
-Uploading this folder to GitHub stores the files; it does not install the integrations or enable a hosted site. The manifests are not configured for a GitHub Pages address. A hosted deployment requires regenerating the manifests for its approved HTTPS address and allowing that origin in Onboard AI Settings. The local service connection still needs verification from the actual host clients.
+The default installation folder is `~/OnboardAI`; keep it in place. Existing installs are not silently replaced. Connections and credentials are configured later in **AI Settings**. No account state or API keys are included in this repository.
 
-Connection setup belongs in Onboard AI → AI Settings → Microsoft 365 and Outlook and Teams connections. Tenant/client IDs, permissions, sign-in and application pairing are configured there. Never commit API keys, access tokens, service state, local certificate private keys or model/runtime directories.
+## Application source
 
-This is a development integration for user-declared PUBLIC content. Unknown, Internal, FCI and CUI are not enabled by the current development policy. The add-ins use real authorized sources when connected and report unavailable states when disconnected; they do not include synthetic mailbox data.
+**[Onboard-Source.zip](Onboard-Source.zip)** contains the complete current integrated application source and supporting local AI code, organized using the original project paths:
+
+- `product/integrated/macos/`: SwiftUI Ask AI and Settings dashboard.
+- `product/integrated/service/`: shared service, Graph and GenAI adapters, web/weather lookup, policy routing and local model adapter.
+- `product/integrated/core/` and `product/meeting_briefing/core/`: Rust policy and source validation.
+- `product/integrated/local/` and `product/local_ai/`: retained local model worker, resource guards, lifecycle checks, supporting calibration source, dependency locks and notices.
+- `product/integrated/web/`: Outlook and Teams interfaces.
+- `product/integrated/tools/` and `setup/`: build, setup, installation and export tools.
+- `SOURCE-INVENTORY.json`: per-file source checksums.
+
+The source is provided as an archive to preserve its directory layout through browser upload. Model weights, installed environments, credentials, private service state and unrelated historical model downloads are excluded. `source-release.json` identifies the source archive and exact model version. The setup downloads assets directly from their pinned publishers; it does not choose a newer model automatically. Third-party notices are retained in the source archive.
+
+## Outlook and Teams
+
+- [outlook.xml](outlook.xml): Outlook add-in manifest.
+- [Onboard-Teams.zip](Onboard-Teams.zip): Teams package; keep this ZIP intact.
+- [Onboard-Web-Assets.zip](Onboard-Web-Assets.zip) and [web/](web/): interfaces and icons.
+- [deployment-status.json](deployment-status.json): current add-in deployment status.
+
+The add-ins currently use `https://localhost:38473`, the Onboard service on the same machine running the client. GitHub stores these files; it is not currently hosting their pages. Installing Onboard AI does not install the add-ins. HTTPS trust, approved tenant deployment and actual host integration tests remain required. See INSTALL.md for GCC High/DoD limitations.
+
+## What has been verified
+
+[SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) records successful setup/build in a separate folder on the development Mac. A second physical Mac and actual Outlook/Teams/Graph/cloud acceptance remain pending. The current content policy permits only user-declared PUBLIC data; sensitive enterprise content is not enabled.

@@ -1,0 +1,16 @@
+# Private state and downloaded/generated assets
+**/.artifacts/
+**/state/
+**/build/
+**/target/
+**/__pycache__/
+*.pyc
+.DS_Store
+.env
+.env.*
+*.key
+*.p12
+*.pfx
+*.safetensors
+*.gguf
+# Named, reviewed publication ZIPs at the repository root are intentional.
