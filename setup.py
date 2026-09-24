@@ -84,7 +84,7 @@ def ensure_rust(opener):
     if not rust_ready():raise RuntimeError('Rust did not become usable. Check the installation output before retrying.')
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path,default=pathlib.Path.home()/'OnboardAI');ap.add_argument('--plan',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');args=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path,default=pathlib.Path.home()/'OnboardAI');ap.add_argument('--plan',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');ap.add_argument('--cache-root',type=pathlib.Path);args=ap.parse_args()
     folder=pathlib.Path(__file__).resolve().parent;release=json.loads((folder/'source-release.json').read_text());archive=folder/release['archive']
     if archive.name!=release['archive'] or digest(archive)!=release['sha256']:raise RuntimeError('The source archive failed verification. Download the repository again.')
     if args.plan:print(json.dumps(release,indent=2));return
@@ -100,6 +100,7 @@ def main():
     extract(archive,destination)
     print('Source verified. Downloading pinned dependencies and building the development app.',flush=True)
     command=[sys.executable,'-B',str(destination/'product/integrated/tools/setup_local.py'),'setup']
+    if args.cache_root:command+=['--cache-root',str(args.cache_root.expanduser().resolve())]
     if args.proxy:command+=['--proxy',args.proxy]
     if not args.build_only:command+=['--install']
     subprocess.run(command,check=True,env=dict(os.environ,PYTHONDONTWRITEBYTECODE='1'))

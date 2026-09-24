@@ -12,7 +12,7 @@ for argument in "$@"; do
             cat source-release.json
             exit 0 ;;
         --help|-h)
-            echo 'Usage: bash Setup.command [--plan] [--build-only] [--destination FOLDER] [--proxy URL]'
+            echo 'Usage: bash Setup.command [--plan] [--build-only] [--destination FOLDER] [--proxy URL] [--cache-root PREVIOUS_FOLDER]'
             echo 'Installs missing prerequisites, then downloads and builds Onboard AI. See INSTALL.md.'
             exit 0 ;;
     esac

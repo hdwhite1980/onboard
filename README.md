@@ -15,6 +15,8 @@ The current setup is a **development source installer for Apple silicon on macOS
 
 The default installation folder is `~/OnboardAI`; keep it in place. Existing installs are not silently replaced. Connections and credentials are configured later in **AI Settings**. No account state or API keys are included in this repository.
 
+If an earlier setup stopped with “Packaged Python identity did not match,” use the recovery command in [INSTALL.md](INSTALL.md). The fixed installer carries the exact qualified Python executable, verifies its existing hash/signature, and can reuse checked downloads from the earlier folder.
+
 ## Application source
 
 **[Onboard-Source.zip](Onboard-Source.zip)** contains the complete current integrated application source and supporting local AI code, organized using the original project paths:
@@ -27,7 +29,7 @@ The default installation folder is `~/OnboardAI`; keep it in place. Existing ins
 - `product/integrated/tools/` and `setup/`: build, setup, installation and export tools.
 - `SOURCE-INVENTORY.json`: per-file source checksums.
 
-The source is provided as an archive to preserve its directory layout through browser upload. Model weights, installed environments, credentials, private service state and unrelated historical model downloads are excluded. `source-release.json` identifies the source archive and exact model version. The setup downloads assets directly from their pinned publishers; it does not choose a newer model automatically. Third-party notices are retained in the source archive.
+The source is provided as an archive to preserve its directory layout through browser upload. Model weights, installed environments, credentials, private service state and unrelated historical model downloads are excluded. `source-release.json` identifies the source archive and exact model version. The setup downloads assets directly from their pinned publishers; it does not choose a newer model automatically. Third-party notices are retained in the source archive. The ZIP also includes the exact previously qualified Python executable (about 17 MB before ZIP compression) and its Python license, so the destination Mac does not have to recreate its signature.
 
 ## Outlook and Teams
 
