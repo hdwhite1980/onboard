@@ -1,0 +1,7 @@
+{
+  "hostingBase": "https://localhost:38473",
+  "localDevelopmentOnly": true,
+  "schemas": "XML/JSON structure generated; Microsoft host validation pending",
+  "deployed": false,
+  "governmentTenantVerified": false
+}
