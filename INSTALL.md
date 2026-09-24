@@ -25,9 +25,9 @@ This is a **development source installer** for **Apple-silicon Macs running macO
    bash Setup.command
    ```
 
-   After preparing the prerequisites, it extracts checked source into `~/OnboardAI`, downloads exact pinned assets over HTTPS, verifies their sizes and SHA-256 hashes, installs packages offline from the verified wheel set, runs fresh harmless worker/monitor qualification, builds the app, and installs it in `~/Applications/Onboard AI.app`.
+   Setup detects an existing managed installation from the installed app, or an unfinished setup in `~/OnboardAI` / `~/OnboardAIFixed`. It updates that folder in place. A first installation uses `~/OnboardAI`. Existing model/download files are size/hash-verified and reused; an intact Python runtime and package environment are reused. Missing assets are downloaded. Setup then reruns harmless qualification, builds the app, and installs it in `~/Applications/Onboard AI.app`. Settings and Keychain credentials are preserved.
 
-   An existing destination or installed Onboard app is not automatically overwritten. To build without installing, choose a fresh destination:
+   Quit Onboard AI before updating; setup also checks and prompts if the matching app is still running. It stops the old background service before source changes. Changed managed source files and the previous app are backed up; locally edited source files are not silently overwritten. To build without replacing the installed app:
 
    ```sh
    bash Setup.command --destination "$HOME/OnboardAITest" --build-only
@@ -40,7 +40,7 @@ If macOS or organizational policy blocks the development app, follow the organiz
 
 ## Connections and add-ins
 
-Configure GCC High/DoD, approved tenant/client IDs and Microsoft sign-in under **AI Settings → Microsoft 365**. Optional web search and GenAI credentials also go in Settings, not in repository files. Secrets are saved using Keychain. The current app has no commercial/GCC sign-in option.
+Configure GCC High/DoD, approved tenant/client IDs and Microsoft sign-in under **AI Settings → Microsoft 365**. Choose an installed browser and search engine under **AI Settings → Internet access**, then save. General searches open in that browser and require no search API key. Browser pages are not automatically read back into Ask AI. Optional GenAI credentials go in Settings, not in repository files. Secrets are saved using Keychain. The current app has no commercial/GCC sign-in option.
 
 The model remains on the Mac after setup. Local AI can run offline; web search, Microsoft 365 retrieval and cloud AI require their configured online connections.
 
@@ -56,15 +56,15 @@ bash Setup.command --proxy http://approved-proxy.example:8080
 
 A blocked or corrupt download stops setup. Verified files are retained; partial downloads are removed. Existing files with incorrect hashes are not overwritten. Setup does not silently select another model/version or bypass the proxy. The selected explicit/manual proxy is also passed to Rust and Cargo. Apple’s system installer uses macOS networking; organization-specific authentication or download restrictions may require IT assistance. No proxy credentials should be placed in command arguments.
 
-If an older installer stopped with **“Packaged Python identity did not match”**, download and extract the latest repository ZIP, open Terminal in that new folder, and run:
+For an update or retry, download the latest repository ZIP, extract it, quit Onboard AI, and run the same command:
 
 ```sh
-bash Setup.command --destination "$HOME/OnboardAIFixed" --cache-root "$HOME/OnboardAI"
+bash Setup.command
 ```
 
-If your earlier installation used another folder, substitute that folder for `~/OnboardAI`. Choose a different fresh destination if `~/OnboardAIFixed` already exists. Setup reuses only size/hash-verified downloaded assets from the earlier folder; it does not reuse its Python executable, environment, or qualification results. The old folder is preserved. This fixes an installer assumption that signing Python again on a different Mac would reproduce identical bytes. Setup now copies the exact qualified executable and retains its original expected hash and signature verification.
+You do not need a new installation folder. If the earlier setup used a custom folder and no app was installed yet, use `bash Setup.command --destination "/path/to/existing/Onboard"`. An optional `--cache-root` can reuse checked downloads from a different old folder.
 
-If setup stops before worker qualification begins, you can retry from the created source folder with `python3 -B product/integrated/tools/setup_local.py setup --install`. If qualification evidence was already created, setup refuses to overwrite it: keep it for diagnosis and use a fresh destination for another explicit attempt.
+The previous “Packaged Python identity did not match” failure is repaired by backing up the differing executable and copying the exact verified qualified executable. No new hash is enrolled. Other corrupt assets or locally modified source files produce a specific error instead of being trusted. Previous qualification evidence is archived under `product/integrated/evidence/setup-history` before fresh checks; changed source backups are in `setup-history`. Files in a managed source folder that were removed from the newer release are retained rather than deleted. The current updater needs at least 2 GiB free for staging, plus space for missing downloads. First-time setup should have at least 6 GiB free.
 
 ## Verification and remaining limits
 

@@ -1,5 +1,5 @@
 """Extract the checked source archive and run the Mac development setup."""
-import argparse,hashlib,json,os,pathlib,platform,re,shutil,stat,subprocess,sys,tempfile,urllib.parse,urllib.request,zipfile
+import argparse,datetime,hashlib,json,os,pathlib,platform,re,shutil,stat,subprocess,sys,tempfile,urllib.parse,urllib.request,zipfile
 
 def digest(path):
     h=hashlib.sha256()
@@ -8,7 +8,6 @@ def digest(path):
     return h.hexdigest()
 
 def extract(source,destination):
-    if destination.exists():raise RuntimeError('Destination already exists. Keep it intact and choose a new --destination folder.')
     with zipfile.ZipFile(source) as z:
         seen=set()
         for member in z.infolist():
@@ -21,10 +20,81 @@ def extract(source,destination):
         for row in inventory:
             data=z.read(row['path'])
             if len(data)!=row['bytes'] or hashlib.sha256(data).hexdigest()!=row['sha256']:raise RuntimeError('Source file checksum mismatch: '+row['path'])
-        destination.mkdir(parents=True,mode=0o700)
+        previous={}
+        marker=destination/'SOURCE-INVENTORY.json'
+        if destination.exists():
+            if not marker.is_file() or marker.is_symlink():raise RuntimeError('This folder is not a managed Onboard installation. Choose its original installation folder with --destination.')
+            previous={row['path']:row for row in json.loads(marker.read_text())['files']}
+        # Validate every existing target before changing anything; retain local modifications.
         for member in z.infolist():
-            target=destination/member.filename;target.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
-            target.write_bytes(z.read(member));target.chmod(0o700 if (member.external_attr>>16)&0o111 else 0o600)
+            target=destination/member.filename
+            if target.is_symlink() or not target.resolve().is_relative_to(destination.resolve()):raise RuntimeError('Source target escapes installation folder')
+            if target.exists() and member.filename!='SOURCE-INVENTORY.json':
+                current=digest(target);new=hashlib.sha256(z.read(member)).hexdigest()
+                if current!=new and current!=previous.get(member.filename,{}).get('sha256'):
+                    raise RuntimeError('Locally modified source kept intact: '+member.filename)
+        destination.mkdir(parents=True,exist_ok=True,mode=0o700)
+        backup=None
+        for member in z.infolist():
+            target=destination/member.filename;data=z.read(member)
+            if target.exists() and target.read_bytes()==data:continue
+            if target.exists():
+                if backup is None:
+                    backup=destination/'setup-history'/datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+                old=backup/member.filename;old.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(target,old)
+            target.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
+            fd,temporary=tempfile.mkstemp(prefix='.onboard-source-',dir=target.parent)
+            try:
+                with os.fdopen(fd,'wb') as output:output.write(data)
+                os.chmod(temporary,0o700 if (member.external_attr>>16)&0o111 else 0o600)
+                os.replace(temporary,target)
+            finally:
+                if os.path.exists(temporary):os.unlink(temporary)
+
+def installation_destination(explicit=None,home=None):
+    home=home or pathlib.Path.home()
+    if explicit:return explicit.expanduser().absolute()
+    installed=home/'Applications/Onboard AI.app/Contents/Resources/local.json'
+    if installed.is_file():
+        root=json.loads(installed.read_text()).get('root','')
+        if root and (pathlib.Path(root)/'SOURCE-INVENTORY.json').is_file():return pathlib.Path(root).resolve()
+        raise RuntimeError('Installed app uses a development checkout, not a managed setup folder. Use --destination for a managed installation; the checkout is preserved.')
+    for candidate in (home/'OnboardAI',home/'OnboardAIFixed'):
+        if (candidate/'SOURCE-INVENTORY.json').is_file():return candidate
+    return home/'OnboardAI'
+
+def prepare_update(destination):
+    if not destination.exists():return
+    app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
+    settings=app.parents[1]/'Resources/local.json'
+    matching=app.is_file() and settings.is_file() and pathlib.Path(json.loads(settings.read_text()).get('root','')).resolve()==destination.resolve()
+    if not matching:
+        import fcntl
+        lock=destination/'product/integrated/state/service.lock'
+        if lock.exists():
+            with lock.open('r') as handle:
+                try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
+                except BlockingIOError:raise RuntimeError('This installation has a running service. Stop it in AI Settings and retry setup.')
+        return
+    # Do not replace code while the UI or its local worker may be using it.
+    running=subprocess.run(['/usr/bin/pgrep','-x','OnboardAI'],capture_output=True,text=True)
+    if running.returncode==0:
+        if not sys.stdin.isatty():raise RuntimeError('Quit Onboard AI, then rerun Setup.command. Existing files will be reused.')
+        input('Quit Onboard AI (Command-Q), then press Return to update using existing files: ')
+        if subprocess.run(['/usr/bin/pgrep','-x','OnboardAI'],capture_output=True).returncode==0:raise RuntimeError('Onboard AI is still open. Quit it and retry.')
+    # The installed executable authenticates its own service shutdown.
+    app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
+    settings=app.parents[1]/'Resources/local.json'
+    if app.is_file() and settings.is_file() and pathlib.Path(json.loads(settings.read_text()).get('root','')).resolve()==destination.resolve():
+        stopped=subprocess.run([str(app),'--stop-service'],capture_output=True,text=True,timeout=40)
+        if stopped.returncode and 'Local service is stopped' not in stopped.stderr:
+            raise RuntimeError('Could not stop the existing Onboard service. Existing files have not been updated.')
+        import time
+        socket=destination/'product/integrated/state/native.sock'
+        for _ in range(100):
+            if not socket.exists():break
+            time.sleep(.1)
+        else:raise RuntimeError('The old service is still shutting down. Retry setup after it stops.')
 
 def configure_network(explicit_proxy=''):
     """Use an explicit or manual proxy; never silently bypass PAC/WPAD."""
@@ -84,21 +154,21 @@ def ensure_rust(opener):
     if not rust_ready():raise RuntimeError('Rust did not become usable. Check the installation output before retrying.')
 
 def main():
-    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path,default=pathlib.Path.home()/'OnboardAI');ap.add_argument('--plan',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');ap.add_argument('--cache-root',type=pathlib.Path);args=ap.parse_args()
+    ap=argparse.ArgumentParser(description=__doc__);ap.add_argument('--destination',type=pathlib.Path);ap.add_argument('--plan',action='store_true');ap.add_argument('--build-only',action='store_true');ap.add_argument('--proxy',default='');ap.add_argument('--cache-root',type=pathlib.Path);args=ap.parse_args()
     folder=pathlib.Path(__file__).resolve().parent;release=json.loads((folder/'source-release.json').read_text());archive=folder/release['archive']
     if archive.name!=release['archive'] or digest(archive)!=release['sha256']:raise RuntimeError('The source archive failed verification. Download the repository again.')
     if args.plan:print(json.dumps(release,indent=2));return
     if platform.system()!='Darwin' or platform.machine()!='arm64' or int(platform.mac_ver()[0].split('.')[0])<26:raise RuntimeError('This setup requires Apple silicon and macOS 26 or later. Windows and Intel Mac installers are not available.')
     subprocess.run(['/usr/bin/xcrun','--find','swiftc'],check=True,stdout=subprocess.DEVNULL)
-    if not args.build_only and (pathlib.Path.home()/'Applications/Onboard AI.app').exists():raise RuntimeError('An Onboard app is already installed. Use --build-only to prepare a separate build without replacing it.')
-    destination=args.destination.expanduser().absolute()
+    destination=installation_destination(args.destination)
+    print("Using installation folder: "+str(destination),flush=True)
     if len(str(destination/'product/integrated/state/native.sock').encode())>103:raise RuntimeError('Choose a shorter destination, such as ~/OnboardAI.')
-    if shutil.disk_usage(pathlib.Path.home()).free<6*1024**3:raise RuntimeError('At least 6 GiB free disk space is required.')
-    if destination.exists():raise RuntimeError('Destination already exists. Choose a new --destination folder; existing files are kept intact.')
+    if shutil.disk_usage(pathlib.Path.home()).free<2*1024**3:raise RuntimeError('At least 2 GiB free disk space is required for update/build staging; missing downloads need additional space.')
     os.umask(0o077)
     ensure_rust(configure_network(args.proxy))
+    prepare_update(destination)
     extract(archive,destination)
-    print('Source verified. Downloading pinned dependencies and building the development app.',flush=True)
+    print('Source verified. Reusing verified installed assets, downloading missing files, and updating the development app.',flush=True)
     command=[sys.executable,'-B',str(destination/'product/integrated/tools/setup_local.py'),'setup']
     if args.cache_root:command+=['--cache-root',str(args.cache_root.expanduser().resolve())]
     if args.proxy:command+=['--proxy',args.proxy]

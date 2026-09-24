@@ -7,7 +7,7 @@ cd "$(dirname "$0")"
 for argument in "$@"; do
     case "$argument" in
         --plan)
-            echo 'Plan: Apple silicon / macOS 26+; install missing Apple developer tools and Rust, then verify source, download pinned model/runtime, build and install Onboard AI.'
+            echo 'Plan: Apple silicon / macOS 26+; install missing Apple developer tools and Rust, then detect the existing installation, reuse verified files, download missing pinned assets, build and install/update Onboard AI.'
             echo 'Apple installation requires approval in its system dialog. No changes made by --plan.'
             cat source-release.json
             exit 0 ;;

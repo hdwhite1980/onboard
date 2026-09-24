@@ -13,9 +13,13 @@ bash Setup.command
 
 The current setup is a **development source installer for Apple silicon on macOS 26 or later**, with one setup script that installs missing Apple developer tools and the official Rust toolchain. If Apple’s installation dialog opens, complete it and press Return in Terminal to continue. It downloads the exact Qwen3-1.7B model and runtime dependencies, verifies SHA-256 checksums, performs fresh local worker/monitor checks, builds the app and installs it for the current user. Approximately **1.42 GB** is downloaded, plus any missing Rust build dependencies. The model then stays on the Mac for offline local AI. This is not a notarized customer installer; Windows and Intel Mac builds are not provided.
 
-The default installation folder is `~/OnboardAI`; keep it in place. Existing installs are not silently replaced. Connections and credentials are configured later in **AI Settings**. No account state or API keys are included in this repository.
+The default installation folder is `~/OnboardAI`; keep it in place. Setup detects managed existing installations, reuses verified model/runtime files, preserves settings, and backs up replaced source files and the previous app. Quit Onboard AI and rerun the same setup command to update. Connections and credentials are configured later in **AI Settings**. No account state or API keys are included in this repository.
 
 If an earlier setup stopped with “Packaged Python identity did not match,” use the recovery command in [INSTALL.md](INSTALL.md). The fixed installer carries the exact qualified Python executable, verifies its existing hash/signature, and can reuse checked downloads from the earlier folder.
+
+## Browser choice
+
+Under **AI Settings → Internet access**, select an installed **Browser** (or the macOS default) and a **Search engine**, then save. General internet searches open there without a Brave API key. Browser results stay in the browser; Onboard does not automatically read its tabs or treat opening a page as a verified answer. Weather remains a direct lookup. Browser network/proxy errors appear in the browser.
 
 ## Application source
 
