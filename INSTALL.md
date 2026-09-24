@@ -71,3 +71,9 @@ The previous “Packaged Python identity did not match” failure is repaired by
 The setup was exercised in a fresh folder on the development Mac, using verified cached assets: Python/dependency installation, runtime identity verification, 10 monitor cycles, 40 harmless worker-stop checks, four Rust tests, Swift compilation and development signature verification passed. The original installed app was not replaced. A real pinned model configuration download was separately verified. The Python test suite includes source integrity and prerequisite-control tests. The Rust installation paths use mocked subprocess/network boundaries in those tests; they do not claim a new Rust installation occurred. `--plan` was also exercised without installing anything.
 
 A second physical Mac, every publisher download from an empty cache, the final install step on that machine, and actual Outlook/Teams/Graph/cloud workflows still need validation. A passing setup build does not establish those results.
+
+## If Start service does not work
+
+The app displays “Starting…” while it waits for an authenticated service response. Success changes to “Local service ready.” Failures appear in AI Settings and the status area, including missing Python/service files, a busy local address, invalid saved settings, and certificate problems. The service writes a private startup diagnostic to `product/integrated/state/startup.log` and `startup.json` in the detected installation folder. Request content and credentials are not intentionally logged.
+
+If your old build shows no feedback, quit Onboard AI, download the newest repository ZIP, and rerun `bash Setup.command`. Then open the updated app from `~/Applications/Onboard AI.app`. If startup still fails, report the displayed error; do not delete settings or disable certificate validation.
