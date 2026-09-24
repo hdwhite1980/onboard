@@ -63,18 +63,24 @@ def installation_destination(explicit=None,home=None):
         if (candidate/'SOURCE-INVENTORY.json').is_file():return candidate
     return home/'OnboardAI'
 
+def installation_service_active(destination):
+    """A leftover lock/socket file alone does not mean the service is running."""
+    import fcntl
+    lock=destination/'product/integrated/state/service.lock'
+    try:handle=lock.open('r')
+    except FileNotFoundError:return False
+    with handle:
+        try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
+        except BlockingIOError:return True
+        return False
+
 def prepare_update(destination,archive=None):
     if not destination.exists():return
     app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
     settings=app.parents[1]/'Resources/local.json'
     matching=app.is_file() and settings.is_file() and pathlib.Path(json.loads(settings.read_text()).get('root','')).resolve()==destination.resolve()
     if not matching and archive is None:
-        import fcntl
-        lock=destination/'product/integrated/state/service.lock'
-        if lock.exists():
-            with lock.open('r') as handle:
-                try:fcntl.flock(handle,fcntl.LOCK_EX|fcntl.LOCK_NB)
-                except BlockingIOError:raise RuntimeError('This installation has a running service. Stop it in AI Settings and retry setup.')
+        if installation_service_active(destination):raise RuntimeError('This installation has a running service. Stop it in AI Settings and retry setup.')
         return
     # Do not replace code while the UI or its local worker may be using it.
     running=subprocess.run(['/usr/bin/pgrep','-x','OnboardAI'],capture_output=True,text=True)
@@ -82,6 +88,13 @@ def prepare_update(destination,archive=None):
         if not sys.stdin.isatty():raise RuntimeError('Quit Onboard AI, then rerun Setup.command. Existing files will be reused.')
         input('Quit Onboard AI (Command-Q), then press Return to update using existing files: ')
         if subprocess.run(['/usr/bin/pgrep','-x','OnboardAI'],capture_output=True).returncode==0:raise RuntimeError('Onboard AI is still open. Quit it and retry.')
+    if not app.is_file():
+        if not installation_service_active(destination):
+            print('No installed app or active installation service to stop. Continuing installation with existing files.',flush=True)
+            return
+        # Deleting an app does not stop its Python host. Its bundle can no longer
+        # be authenticated, so do not guess which process is safe to terminate.
+        raise RuntimeError('The app was deleted, but its background service is still running. Restart this Mac, then rerun Setup.command. Keep your Onboard installation folder; its verified model and settings will be reused.')
     # The installed executable authenticates its own service shutdown.
     app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
     settings=app.parents[1]/'Resources/local.json'

@@ -85,3 +85,9 @@ Choose **AI Settings → Stop service**. The button shows **Stopping…** and re
 **Start service** reuses a responsive current service or stops a verified older host before starting the current one. Simultaneous Start/Stop actions from updated app copies are serialized. Active child work in an older host prevents forced shutdown; let that request finish and click Stop again. Updated hosts cancel queued/local work and wait for worker cleanup. The app does not automatically restart a service after you stop it while the app remains open.
 
 The updater uses the same verified shutdown helper before replacing existing source, so an old native-client identity failure does not by itself require deleting your installation. Quit the Onboard window, download the latest repository ZIP, and run `bash Setup.command` in the extracted folder. Existing verified models, runtime files and settings are reused.
+
+## Reinstall after deleting the app
+
+Keep the managed installation folder (normally `~/OnboardAI`). When the app is missing and the installation has no active service lock, setup continues without calling the missing app or requiring a successful Stop operation. Leftover socket and lock files alone do not block installation. Your settings and checked runtime/model files are preserved.
+
+If the deleted app's background service is still holding the installation lock, restart the Mac and rerun `bash Setup.command` from the latest extracted repository ZIP. Restarting clears that process; setup does not force-stop an unverifiable process whose app bundle has been deleted. If Onboard's window is still running, quit it first.
