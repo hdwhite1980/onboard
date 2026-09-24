@@ -1,15 +1,15 @@
 {
   "archive": "Onboard-Source.zip",
-  "sha256": "36bf7080cb8728f5ad1090fb6756ee4a73a8e1138dd94ab0959c28fe65312abc",
-  "bytes": 836672,
+  "sha256": "0a1343cb8c954ca13715563c1e8524e00ab8b3ce9145bdb5cd2b3f0d02825dbc",
+  "bytes": 840272,
   "sourceFiles": 289,
   "model": "mlx-community/Qwen3-1.7B-4bit",
   "modelRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
   "modelManifestSHA256": "1721e23c79d4367cb3e12a6811aabd61a8526c511b0f30f7134ecaeb40ef0778",
   "platform": "Apple silicon, macOS 26+",
   "prerequisites": [
-    "Apple command-line developer tools",
-    "Rust toolchain"
+    "Apple command-line developer tools (script opens official installer; user completes dialog)",
+    "Rust stable minimal toolchain (installed automatically if missing)"
   ],
   "downloadBytes": 1415956899,
   "installerKind": "Development source installer, not notarized",

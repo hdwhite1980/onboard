@@ -11,7 +11,7 @@ bash Setup.command --plan
 bash Setup.command
 ```
 
-The current setup is a **development source installer for Apple silicon on macOS 26 or later**, requiring Apple's command-line developer tools and Rust. It downloads the exact Qwen3-1.7B model and runtime dependencies, verifies SHA-256 checksums, performs fresh local worker/monitor checks, builds the app and installs it for the current user. Approximately **1.42 GB** is downloaded, plus any missing Rust build dependencies. The model then stays on the Mac for offline local AI. This is not a notarized customer installer; Windows and Intel Mac builds are not provided.
+The current setup is a **development source installer for Apple silicon on macOS 26 or later**, with one setup script that installs missing Apple developer tools and the official Rust toolchain. If Apple’s installation dialog opens, complete it and press Return in Terminal to continue. It downloads the exact Qwen3-1.7B model and runtime dependencies, verifies SHA-256 checksums, performs fresh local worker/monitor checks, builds the app and installs it for the current user. Approximately **1.42 GB** is downloaded, plus any missing Rust build dependencies. The model then stays on the Mac for offline local AI. This is not a notarized customer installer; Windows and Intel Mac builds are not provided.
 
 The default installation folder is `~/OnboardAI`; keep it in place. Existing installs are not silently replaced. Connections and credentials are configured later in **AI Settings**. No account state or API keys are included in this repository.
 
