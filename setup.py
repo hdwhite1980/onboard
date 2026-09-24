@@ -63,12 +63,12 @@ def installation_destination(explicit=None,home=None):
         if (candidate/'SOURCE-INVENTORY.json').is_file():return candidate
     return home/'OnboardAI'
 
-def prepare_update(destination):
+def prepare_update(destination,archive=None):
     if not destination.exists():return
     app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
     settings=app.parents[1]/'Resources/local.json'
     matching=app.is_file() and settings.is_file() and pathlib.Path(json.loads(settings.read_text()).get('root','')).resolve()==destination.resolve()
-    if not matching:
+    if not matching and archive is None:
         import fcntl
         lock=destination/'product/integrated/state/service.lock'
         if lock.exists():
@@ -86,15 +86,29 @@ def prepare_update(destination):
     app=pathlib.Path.home()/'Applications/Onboard AI.app/Contents/MacOS/OnboardAI'
     settings=app.parents[1]/'Resources/local.json'
     if app.is_file() and settings.is_file() and pathlib.Path(json.loads(settings.read_text()).get('root','')).resolve()==destination.resolve():
-        stopped=subprocess.run([str(app),'--stop-service'],capture_output=True,text=True,timeout=40)
-        if stopped.returncode and 'Local service is stopped' not in stopped.stderr:
+        stopped=subprocess.run([str(app),'--stop-service'],capture_output=True,text=True,timeout=60)
+        if archive is None and stopped.returncode and 'Local service is stopped' not in stopped.stderr:
             raise RuntimeError('Could not stop the existing Onboard service. Existing files have not been updated.')
+        if archive is not None:
+            stop_previous_from_archive(archive,destination);return
         import time
         socket=destination/'product/integrated/state/native.sock'
         for _ in range(100):
             if not socket.exists():break
             time.sleep(.1)
         else:raise RuntimeError('The old service is still shutting down. Retry setup after it stops.')
+    if archive is not None:stop_previous_from_archive(archive,destination)
+
+def stop_previous_from_archive(archive,destination):
+    # main verified the release ZIP; check its helper against the inventory before execution.
+    name='product/integrated/service/service_control.py'
+    with zipfile.ZipFile(archive) as z:
+        data=z.read(name);row=next(x for x in json.loads(z.read('SOURCE-INVENTORY.json'))['files'] if x['path']==name)
+        if hashlib.sha256(data).hexdigest()!=row['sha256'] or len(data)!=row['bytes']:raise RuntimeError('Service control helper failed source verification.')
+    with tempfile.TemporaryDirectory(prefix='onboard-update-control-') as folder:
+        helper=pathlib.Path(folder)/'service_control.py';helper.write_bytes(data)
+        result=subprocess.run([sys.executable,'-I','-B',str(helper),'--state',str(destination/'product/integrated/state')],capture_output=True,text=True,timeout=40)
+        if result.returncode:raise RuntimeError(result.stderr.strip() or 'Could not stop the old Onboard service; existing files are unchanged.')
 
 def configure_network(explicit_proxy=''):
     """Use an explicit or manual proxy; never silently bypass PAC/WPAD."""
@@ -166,7 +180,7 @@ def main():
     if shutil.disk_usage(pathlib.Path.home()).free<2*1024**3:raise RuntimeError('At least 2 GiB free disk space is required for update/build staging; missing downloads need additional space.')
     os.umask(0o077)
     ensure_rust(configure_network(args.proxy))
-    prepare_update(destination)
+    prepare_update(destination,archive)
     extract(archive,destination)
     print('Source verified. Reusing verified installed assets, downloading missing files, and updating the development app.',flush=True)
     command=[sys.executable,'-B',str(destination/'product/integrated/tools/setup_local.py'),'setup']

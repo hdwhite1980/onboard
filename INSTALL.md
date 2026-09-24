@@ -77,3 +77,11 @@ A second physical Mac, every publisher download from an empty cache, the final i
 The app displays “Starting…” while it waits for an authenticated service response. Success changes to “Local service ready.” Failures appear in AI Settings and the status area, including missing Python/service files, a busy local address, invalid saved settings, and certificate problems. The service writes a private startup diagnostic to `product/integrated/state/startup.log` and `startup.json` in the detected installation folder. Request content and credentials are not intentionally logged.
 
 If your old build shows no feedback, quit Onboard AI, download the newest repository ZIP, and rerun `bash Setup.command`. Then open the updated app from `~/Applications/Onboard AI.app`. If startup still fails, report the displayed error; do not delete settings or disable certificate validation.
+
+## Stop an older or stuck Onboard service
+
+Choose **AI Settings → Stop service**. The button shows **Stopping…** and reports **Local service stopped** only after shutdown is checked. It first requests authenticated shutdown, then checks for an older Onboard host occupying the local address or installation lock. It verifies the current macOS user, process start time, exact host arguments, app layout, deployment settings and app signature before signalling the process. An idle verified host that ignores normal termination is force-stopped after a grace period. Unrecognized applications are left running and reported.
+
+**Start service** reuses a responsive current service or stops a verified older host before starting the current one. Simultaneous Start/Stop actions from updated app copies are serialized. Active child work in an older host prevents forced shutdown; let that request finish and click Stop again. Updated hosts cancel queued/local work and wait for worker cleanup. The app does not automatically restart a service after you stop it while the app remains open.
+
+The updater uses the same verified shutdown helper before replacing existing source, so an old native-client identity failure does not by itself require deleting your installation. Quit the Onboard window, download the latest repository ZIP, and run `bash Setup.command` in the extracted folder. Existing verified models, runtime files and settings are reused.

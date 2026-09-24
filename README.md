@@ -17,6 +17,10 @@ The default installation folder is `~/OnboardAI`; keep it in place. Setup detect
 
 If an earlier setup stopped with “Packaged Python identity did not match,” use the recovery command in [INSTALL.md](INSTALL.md). The fixed installer carries the exact qualified Python executable, verifies its existing hash/signature, and can reuse checked downloads from the earlier folder.
 
+## Service controls
+
+Use **AI Settings → Stop service** to stop the current or a verified older Onboard host. The app displays progress and checks that shutdown completed. **Start service** automatically recovers an idle verified older host occupying the address. Other applications are left running. Updated setup includes this recovery and preserves verified existing model/runtime files and settings.
+
 ## Browser choice
 
 Under **AI Settings → Internet access**, select an installed **Browser** (or the macOS default) and a **Search engine**, then save. General internet searches open there without a Brave API key. Browser results stay in the browser; Onboard does not automatically read its tabs or treat opening a page as a verified answer. Weather remains a direct lookup. Browser network/proxy errors appear in the browser.
