@@ -67,3 +67,7 @@ The Teams loading correction updates both the native service and tab code. Updat
 ## Microsoft sign-in address correction
 
 If sign-in stops with “Unexpected Microsoft sign-in address,” update from the latest repository ZIP and rerun `bash Setup.command`. Microsoft now returns `https://login.microsoft.com/device` for this commercial device-code flow; the corrected app accepts that exact address. Your Entra redirect settings do not need changing. Verified models and existing settings are reused.
+
+## Outlook Connect button
+
+The latest app corrects a blocked Microsoft Office.js dependency that left Outlook's Connect button disabled. The fix was verified in the actual Outlook for Mac add-in. Update the native app/service, reload the add-in, sign in again in Onboard Settings and generate a fresh Outlook pairing code. Initialization failures now display a reason and offer a retry button.

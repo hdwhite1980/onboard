@@ -129,3 +129,9 @@ For Teams loading followed by a blank tab, use version **0.2.2** and update the 
 ## “Unexpected Microsoft sign-in address”
 
 The September 25 sign-in correction accepts Microsoft's newer `https://login.microsoft.com/device` verification page for Commercial/GCC device-code sign-in. The previous build rejected that real address. No redirect URI, secret, or permission change is needed for this error. Update from the latest repository using `bash Setup.command`, reopen Onboard, and start a new Microsoft sign-in. Existing verified models, settings and runtime files are reused. The change does not enable arbitrary Microsoft subdomains or change government token/Graph endpoints.
+
+## Outlook Connect is disabled
+
+Update the native app/service and reopen the Outlook add-in. A previous security policy blocked the exact `https://ajax.aspnetcdn.com/ajax/3.5/MicrosoftAjax.js` dependency loaded by Microsoft's Office.js SDK. The correction permits this file only for the Outlook page. Startup now times out with a visible explanation and a **Retry Outlook connection** button instead of leaving Connect disabled indefinitely. A mailbox identity is required for pairing; a selected message is required only when including that message in a request.
+
+After a service update, sign in to Microsoft again in Onboard Settings and generate a fresh Outlook pairing code. Codes expire after two minutes. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.

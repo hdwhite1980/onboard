@@ -86,3 +86,11 @@ The app was updated on the development Mac, preserving the prior app, local runt
 ## Microsoft device verification address correction — 2026-09-25
 
 The owner's configured commercial Entra app returned `https://login.microsoft.com/device`, which the old allowlist rejected. A real device-code start reproduced the failure; after the correction, the same live response passed validation. Codes and tokens were not logged or saved, and no sign-in was completed. The added address is limited to the exact HTTPS device page for the commercial authority (including GCC); government routing and token destinations are unchanged. Malformed URLs, credentials in URLs, unexpected ports, spoofed hosts and other paths on the newly allowed host are rejected. All 121 Python tests and four Rust build tests passed. The updated app was installed on the development Mac.
+
+## Outlook Connect initialization correction — 2026-09-25
+
+Actual Outlook for Mac showed “Connecting to the application” indefinitely with Connect disabled. Startup diagnostics identified a script-src-elem block for ajax.aspnetcdn.com. Microsoft's current Office.js and outlook-mac-16.00.js both request the exact HTTPS /ajax/3.5/MicrosoftAjax.js dependency. The CSP now allows only that file, only on the Outlook page; Teams policy and API origin checks are unchanged. No unsafe-inline or unsafe-eval directive was added.
+
+After installing and restarting the service, reloading the actual Outlook add-in produced “Outlook is ready. Enter your local connection code to connect Onboard.” The native accessibility tree showed Connect enabled. This verifies the host initialization/button fix; a fresh Microsoft sign-in and pairing code are required after the restart, and no message was submitted to AI during verification.
+
+All 123 Python tests, 15 JavaScript initialization tests and four Rust build tests pass. Missing Office libraries, initialization timeout, wrong host and missing mailbox identity remain explicit failures. Pairing no longer requires a selected message, but including an opened item still checks item availability.
