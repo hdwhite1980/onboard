@@ -29,7 +29,7 @@ el('pair').addEventListener('click',async()=>{
   let identity={};
   if(application==='outlook')identity={email:context.userProfile.emailAddress};
   else identity={tenant:context.user?.tenant?.id,account:context.user?.id};
-  const r=await api('pair',{code:el('code').value.trim(),application,...identity},false);token=r.token;el('code').value='';if(el('allow-cloud')){el('allow-cloud').disabled=!r.cloud_available;el('allow-cloud').checked=!!r.cloud_available;text('cloud-destination',r.cloud_available?'Cloud destination: '+r.cloud_name+'. Only locally selected sources are sent.':'Configure GenAI and enable add-in cloud analysis in AI Settings to use it.');}text('status','Connected for 30 minutes as '+r.account+'.');el('submit').disabled=false;
+  const r=await api('pair',{code:el('code').value.trim(),application,...identity},false);token=r.token;el('code').value='';if(el('allow-cloud')){el('allow-cloud').disabled=!r.cloud_available;el('allow-cloud').checked=!!r.cloud_available;text('cloud-destination',r.cloud_available?'Cloud destination: '+r.cloud_name+'. Only locally selected sources are sent.':'Configure GenAI and enable add-in cloud analysis in AI Settings to use it.');}text('status','Connected as '+r.account+'. No Onboard connection timeout.');el('submit').disabled=false;
  }catch(e){text('status',e.message);}
 });
 el('disconnect').addEventListener('click',async()=>{generation++;try{if(token)await api('disconnect',{});}catch(_){}token='';activeJob='';el('submit').disabled=true;el('cancel').disabled=true;el('answer').value='';el('sources').replaceChildren();text('status','Disconnected.');});
