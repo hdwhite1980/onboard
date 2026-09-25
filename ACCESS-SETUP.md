@@ -4,7 +4,7 @@ Onboard should use the signed-in user's existing Microsoft 365 access. Microsoft
 
 ## What the current build actually supports
 
-This build uses a separate Microsoft device-code sign-in in the native app and a temporary code to connect each add-in to the local AI service. It does **not** yet implement Teams or Outlook single sign-on (SSO).
+This build uses a separate Microsoft device-code sign-in in the native app and an account-matched approval in the native app to connect each add-in to the local AI service (no typed connection code required). It does **not** yet implement Teams or Outlook single sign-on (SSO).
 
 **AI Settings → Microsoft 365 → Environment → Automatic** now discovers the configured tenant's environment from Microsoft's HTTPS OpenID metadata before sign-in. Commercial, GCC, GCC High and DoD are supported routing choices. The **Detect tenant environment** button checks the entered tenant ID without signing in or reading organizational content. Save the tenant/client IDs and permissions before selecting **Sign in with Microsoft**; detection also runs automatically during that sign-in.
 
@@ -22,14 +22,18 @@ Only one tenant/account is active at a time. After changing the tenant/client ID
 
 Routing and rejection paths have automated control tests. Live sign-in, delegated Graph retrieval, and government-cloud acceptance require actual approved tenant/app configuration and remain unverified. No successful sign-in or enterprise content was fabricated.
 
-## The two codes are different
+## Connect Outlook or Teams without copying a code
 
-| Prompt | Purpose | Where it is used |
-| --- | --- | --- |
-| Microsoft sign-in code | Authorizes Onboard as the signed-in Microsoft user through the current device-code flow | The Microsoft sign-in page opened from AI Settings |
-| One-use pairing code | Connects a particular add-in to the same user's local Onboard service | The Onboard panel inside Outlook or Teams |
+1. Start **Onboard AI** and sign in to Microsoft 365 in **AI Settings** using the same account as Outlook or Teams.
+2. In the add-in, click **Connect to Onboard**.
+3. Switch to the Onboard app. A request appears at the top of either Ask AI or AI Settings, showing the account, application and add-in address. Click **Allow connection** only for the request you just initiated.
+4. The add-in connects automatically after approval. Click **Decline** to reject an unexpected request, or **Disconnect** in the add-in to cancel.
 
-The pairing code is generated in **Onboard → AI Settings → Outlook and Teams connections** after Microsoft sign-in. Choose Outlook or Teams, then **Create one-use pairing code**. Enter it into that application's Onboard panel when ready. It has no time-based expiry and is consumed on use. Creating another code replaces the previous unused code. The resulting Onboard connection has no time-based expiry; disconnect, service restart or account/configuration changes invalidate it. Microsoft token expiry and organizational sign-in policies still apply. Reloading the tab clears its in-memory connection token. It is not a license key and it grants no new Microsoft permissions. Do not share either code in support messages.
+This flow matches Outlook's reported email or Teams' reported tenant/user ID against Onboard's authenticated Microsoft session. Host-reported context alone is not proof of identity: approval over the native app's verified local channel is what grants access. Only the requesting add-in, on the same approved origin and holding its private request secret, can collect the one-use approval. No Microsoft permission or cloud-processing permission is added.
+
+Connections have no Onboard time-based expiry. Microsoft token expiry and organizational sign-in policies still apply. Disconnect, service restart, account/settings changes, or reloading an add-in require reconnecting and approving again. Tokens stay in memory. Abandoned approval requests are removed after ten minutes; click Connect to Onboard again if needed. This does not expire an established connection.
+
+**Advanced fallback:** both the add-in and AI Settings retain **Advanced: connect with a code**. A generated pairing code is one-use, has no time-based expiry, and is replaced by the next generated code. The Microsoft device sign-in code is different: it belongs only on Microsoft's sign-in page and is still needed for the current Microsoft login flow. Never share either code in support messages.
 
 ## Administrator setup for the current development build
 
@@ -37,7 +41,7 @@ The pairing code is generated in **Onboard → AI Settings → Outlook and Teams
 2. Under **Authentication → Advanced settings**, enable **Allow public client flows** only if the organization authorizes device-code sign-in for this development app. This flow has no redirect callback and uses no client secret. If organizational policy blocks device code, an approved supported sign-in adapter is required; do not weaken that policy. See [Microsoft's device-code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code).
 3. Under **API permissions → Add a permission → Microsoft Graph → Delegated permissions**, add only the features being tested from the table below. Do not choose Application permissions for this user-scoped design. Have an authorized administrator approve consent where Microsoft or the tenant's consent policy requires it.
 4. In **Onboard → AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, enter the two IDs, enable the same read capabilities and **Save settings**. Select **Sign in with Microsoft** and complete Microsoft's sign-in with the same account used in Outlook/Teams. MFA and Conditional Access still apply.
-5. Start the local service, establish the approved HTTPS setup, deploy the appropriate add-in through the organization's supported route, and pair it as described above. The current policy permits only genuinely public content approved for local processing; existing mailbox access does not change that processing restriction.
+5. Start the local service, establish the approved HTTPS setup, deploy the appropriate add-in through the organization's supported route, and connect/approve it as described above. The current policy permits only genuinely public content approved for local processing; existing mailbox access does not change that processing restriction.
 
 | Onboard option | Delegated Graph permissions requested by this build |
 | --- | --- |
@@ -119,3 +123,11 @@ If the model answer fails, the add-in shows copied, verified local source excerp
 **Suggest a reply**, Rewrite, Shorten and Professional tone read only the selected email by default. They do not automatically add other thread messages or run a mailbox search. The Outlook related-email search checkbox starts off; selecting a reply/edit task clears an earlier search selection. You can explicitly check it again to add related-mail candidates, or add specific authorized sources. Related-mail search now requires all chosen topic terms, instead of matching any single term; generic instructions such as “suggest a reply” are not search topics. Search remains bounded to ten candidates and is not exhaustive.
 
 For email context, standard footer blocks and URL-only blocks are omitted; long tracking URLs are removed as separate spans. Remaining excerpts are exact substrings of the retrieved message, with omissions disclosed. No tracking or unsubscribe link is opened. Explicit questions about links, privacy, copyright or footers preserve that material. If only links/footer text remains, Onboard asks you to review the original instead of inventing a reply. Original text remains under Supporting sources. Source titles replace opaque Graph IDs in the answer display.
+
+## Clean replies and automated notices
+
+The response box contains the proposed draft only. Source quotations and full retrieved email text are grouped under collapsed **Supporting sources**, with one heading per source. Missing-information notes stay outside the draft and are not copied into the sending composer. Withheld responses show a short explanation instead of filling the reply box with copied email footers.
+
+**Suggest a reply** recognizes a standalone “Please do not reply to this email” notice in the selected email and recommends against replying. It does not generate a meeting invitation or enable sending that advice as a draft. Choose **Draft follow-up** if you want a separate support message, then select a trusted recipient and review it. The conversational-draft button no longer asks for a meeting by default; available times remain an explicit option. No email links are followed to establish whether a notice is genuine.
+
+The approval and display changes have automated control tests. Actual approval inside Outlook and Teams, and the user's specific email, still require an acceptance check after updating/reopening the apps. These changes do not implement Microsoft host SSO.

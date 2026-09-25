@@ -60,7 +60,7 @@ The add-ins currently use `https://localhost:38473`, the Onboard service on the 
 
 In **AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, enter the organization-approved tenant and application IDs, select required read capabilities and save. **Detect tenant environment** previews the result; sign-in also detects automatically. Microsoft metadata selects Commercial, GCC, GCC High or DoD and its corresponding Graph endpoint. Conflicting metadata or a blocked request stops sign-in; tokens are not retried through another cloud.
 
-[ACCESS-SETUP.md](ACCESS-SETUP.md) explains Entra registration, delegated permissions, the Microsoft sign-in code versus the local pairing code, and the intended SSO experience. **Teams/Outlook host SSO is not implemented yet.** Live organizational sign-in and Graph acceptance remain pending approved configuration.
+[ACCESS-SETUP.md](ACCESS-SETUP.md) explains Entra registration, delegated permissions, Microsoft sign-in and the native account-matched connection approval, and the intended SSO experience. **Teams/Outlook host SSO is not implemented yet.** Live organizational sign-in and Graph acceptance remain pending approved configuration.
 
 The Teams loading correction updates both the native service and tab code. Update the app as well as the Teams package. The local pages pass native macOS HTTPS validation, but the tested Teams client still shows an embedded browser error. A supported Teams HTTPS deployment remains unresolved; the update is not evidence of a working end-to-end Teams integration.
 
@@ -70,7 +70,7 @@ If sign-in stops with “Unexpected Microsoft sign-in address,” update from th
 
 ## Outlook Connect button
 
-The latest app corrects a blocked Microsoft Office.js dependency that left Outlook's Connect button disabled. The fix was verified in the actual Outlook for Mac add-in. Update the native app/service, reload the add-in, sign in again in Onboard Settings and generate a fresh Outlook pairing code. Initialization failures now display a reason and offer a retry button.
+The latest app corrects a blocked Microsoft Office.js dependency that left Outlook's Connect button disabled. The fix was verified in the actual Outlook for Mac add-in. Update the native app/service, reload the add-in, sign in again in Onboard Settings, choose Connect to Onboard in Outlook and approve in the native app. Initialization failures now display a reason and offer a retry button.
 
 ## Outlook local review and cloud analysis update
 
@@ -101,3 +101,11 @@ Reply drafting now uses the selected email without automatically searching unrel
 Email tracking URLs and standard footer blocks are excluded from AI context unless the question asks about them. Original source text remains available; no email link is opened. The model selects numbered evidence references, and Onboard attaches and checks the exact text. A narrow JSON structural repair handles one observed extra brace without changing field values. Unknown references, ambiguous aliases, conflicting quotes, incomplete output and copied placeholders still fail. The interface shows source titles instead of long mailbox IDs.
 
 202 Python checks, 27 JavaScript checks and four Rust tests passed. A captured real offline model response on public installation documentation produced a first-person acknowledgment and passed the corrected parser/reference validation. This is not a live Outlook mailbox acceptance claim. Update the native app, sign in again after the service restart, reconnect Outlook, open the intended email and choose **Suggest a reply** with **Include the opened item** on and **Also search related emails** off.
+
+## Cleaner replies and no-code connections
+
+The draft box now contains the proposed reply only. Supporting quotations and original source text are collapsed under one heading per source, and missing-information notes remain outside the draft. An explicit no-reply notice in the selected email recommends against replying instead of generating a meeting request. Conversational drafts no longer ask for a meeting by default.
+
+In either add-in, choose **Connect to Onboard**, then click **Allow connection** at the top of the Onboard desktop app. The reported Outlook/Teams account must match Onboard's authenticated Microsoft account. Native approval authorizes the connection; a matching account string alone grants no access. No typed local code is required. Codes remain an optional advanced fallback. Microsoft host SSO is still not implemented. Restarting or reloading requires reconnecting and approving again; Microsoft sign-in policies still apply.
+
+Update through **Setup.command**, quit/reopen the native app, sign in, and reload each add-in. Existing models/runtime files are reused. 211 Python checks, 31 JavaScript checks and four Rust checks passed; the signed development build was installed and its service started. Actual approval inside Outlook/Teams and the reported email still require a live acceptance check. No real email or Teams message was sent during testing.

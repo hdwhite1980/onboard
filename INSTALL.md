@@ -134,7 +134,7 @@ The September 25 sign-in correction accepts Microsoft's newer `https://login.mic
 
 Update the native app/service and reopen the Outlook add-in. A previous security policy blocked the exact `https://ajax.aspnetcdn.com/ajax/3.5/MicrosoftAjax.js` dependency loaded by Microsoft's Office.js SDK. The correction permits this file only for the Outlook page. Startup now times out with a visible explanation and a **Retry Outlook connection** button instead of leaving Connect disabled indefinitely. A mailbox identity is required for pairing; a selected message is required only when including that message in a request.
 
-After a service update, sign in to Microsoft again in Onboard Settings and generate a fresh Outlook pairing code. Codes have no time-based expiry and can be used once. Generating another code replaces the previous unused code. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.
+After a service update, sign in to Microsoft again in Onboard Settings, click Connect to Onboard in Outlook, and approve in the native app. Codes have no time-based expiry and can be used once. Generating another code replaces the previous unused code. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.
 
 ## Outlook context limits and cloud analysis
 
@@ -150,12 +150,12 @@ All requests still use the public-content development policy. Microsoft mailbox 
 
 Update the native app/service, then reload the Outlook and Teams panels. Both now expose the shared 2,048-token local workflow and optional cloud-analysis control. Teams applies this to accessible messages in the current chat/channel and explicitly chosen sources. No new mailbox or Teams permissions are granted by this update.
 
-Generate one new code after updating and reconnect each panel. The code no longer has a two-minute timer, and a paired Onboard connection no longer has a 30-minute timer. Codes are still one-use and replaced when another code is generated. Restarting/disconnecting or changing account/settings clears connections; reloading a panel also clears its in-memory token. Microsoft sign-in requirements are unchanged.
+After updating, choose Connect to Onboard in each panel and approve in the native app. The optional advanced code fallback remains available. The code no longer has a two-minute timer, and a paired Onboard connection no longer has a 30-minute timer. Codes are still one-use and replaced when another code is generated. Restarting/disconnecting or changing account/settings clears connections; reloading a panel also clears its in-memory token. Microsoft sign-in requirements are unchanged.
 
 
 ## Review messages before sending
 
-Update the app/service and reopen both add-ins to see the shared **Send a message through Outlook or Teams** composer. The additional sending settings are off by default. In AI Settings, enable **Send reviewed emails** and/or **Send reviewed Teams messages**, save, and sign in again after adding the delegated permissions described in ACCESS-SETUP.md. Reconnect the add-in with a new one-use code.
+Update the app/service and reopen both add-ins to see the shared **Send a message through Outlook or Teams** composer. The additional sending settings are off by default. In AI Settings, enable **Send reviewed emails** and/or **Send reviewed Teams messages**, save, and sign in again after adding the delegated permissions described in ACCESS-SETUP.md. Choose Connect to Onboard and approve the request in the native app.
 
 Prepare and edit your message, choose a recipient, optionally check your real calendar for meeting times, click **Review message**, then **Send**. Nothing is sent merely by asking the AI. If delivery is unconfirmed, check Sent Items or Teams before creating another draft.
 
@@ -167,3 +167,9 @@ Source-validation errors now distinguish invalid formatting from mismatched quot
 Update Onboard and reload the Outlook add-in. **Suggest a reply** now reads the selected email without automatically searching the mailbox or adding its thread. **Also search related emails** starts unchecked and must be explicitly selected to add search context. Additional specific sources can still be supplied.
 
 Tracking-link and standard footer text is omitted from email AI context, with original text retained for review. The model cites supplied numbered evidence references; Onboard attaches and verifies the exact source text. Unknown references remain blocked. This addresses unrelated promotional messages and fragile quotation copying without disabling source checks. Source titles replace long mailbox IDs in the answer.
+
+## Cleaner drafts and no-code add-in approval
+
+Run the latest **Setup.command**, then quit and reopen Onboard AI so the new native approval controls are loaded. Sign in to Microsoft 365 in AI Settings, reload the Outlook or Teams add-in, choose **Connect to Onboard**, and click **Allow connection** at the top of the Onboard window. No local connection code is required. Existing runtime/model files are reused. See ACCESS-SETUP.md for approval, reconnection and optional advanced-code behavior.
+
+Reply text is now separate from expandable supporting sources. An explicit no-reply notice produces advice rather than an invented reply. Requests to prepare a conversational draft no longer automatically request a meeting. Sending still requires recipient review and an explicit Send click.

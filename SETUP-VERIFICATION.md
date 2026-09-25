@@ -130,3 +130,13 @@ No mailbox or provider response was fabricated. These controls are not a claim o
 - Numbered evidence references replace brittle model-retyped quotations. Exact source text is attached by the service and checked against the retrieved original. Supplied source aliases resolve only when unambiguous. Unknown IDs, conflicting fields and malformed/incomplete answers still fail. Duplicate JSON fields and known placeholder answers are rejected. One observed premature structural brace can be removed without changing any field value.
 - Public-document live testing exposed direct-quotation mismatch, copied prompt placeholders, alias confusion, an invented extra reference and a misplaced brace; these findings were not counted as passing quality results. One run also stopped under the retained runtime guard. The final captured actual local response used 1,285 prompt tokens and generated: “Thank you for the installation instructions. I have not installed the app yet.” Replaying that unchanged response through the corrected parser/reference validator passed with one exact evidence reference. This was public documentation, not customer email, and not a claim of universal model quality.
 - 202 Python tests, 27 JavaScript tests and four Rust tests passed. Staged and installed development signatures verified. No real email, Teams message, private mailbox data or tracking links were used in model tests or sent during this work. Live Outlook reply acceptance still requires the owner to open the intended email and retry.
+
+
+## Native approval and reply display update — September 25, 2026
+
+- 211 Python, 31 JavaScript and four Rust control tests passed.
+- SwiftUI build and ad-hoc signature verification passed; installed development service started.
+- Pending connection alone grants no session. Mismatched accounts, wrong origin/secret, replay, account changes, decline, cancellation and invalidation are tested. Requests are bounded; abandoned approval requests expire after ten minutes while established sessions have no time-based Onboard expiry.
+- Code-free connect controls share the same implementation in Outlook and Teams. Legacy code fallback remains under Advanced.
+- Reply display separates editable text from expandable original evidence. Explicit no-reply notices return deterministic advice without model/cloud execution or enabling message review. Conversational drafts no longer request meetings implicitly.
+- Tests use declared control fixtures, not fabricated live mailbox data. This update does not claim Microsoft host SSO, live in-host approval acceptance or successful model analysis of the user's specific notice. No user email body, ID or account data is included in these artifacts.
