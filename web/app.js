@@ -15,14 +15,15 @@ function officeValue(value){return new Promise((resolve,reject)=>{if(typeof valu
 async function init(){
  try{
   if(application==='outlook'){
-   await Office.onReady();if(!Office.context.mailbox?.item)throw Error('Open a message or meeting in Outlook to use this add-in.');
-   context=Office.context.mailbox;hostReady=true;text('context','Connected to your opened Outlook item.');
+   context=await OnboardOutlook.initialize();hostReady=true;text('context','Outlook is ready. Enter your local connection code to connect Onboard.');
   }else{
    context=await OnboardTeams.initialize();hostReady=true;text('context','Teams context available. Only explicitly selected, accessible sources are retrieved.');
   }
- }catch(error){hostReady=false;const message=application==='teams' ? 'Teams connection failed: '+error.message : 'Open this integration inside Outlook. Browser previews do not establish a host connection.';text('context',message);text('status',message);}
+ }catch(error){hostReady=false;const message=(application==='teams' ? 'Teams':'Outlook')+' connection failed: '+error.message;text('context',message);text('status',message);}
  el('pair').disabled=!hostReady;
+ if(el('retry-host')){el('retry-host').disabled=false;el('retry-host').hidden=hostReady;}
 }
+el('retry-host')?.addEventListener('click',()=>{el('retry-host').disabled=true;text('context','Reconnecting to Outlook…');init();});
 el('pair').addEventListener('click',async()=>{
  try{
   let identity={};
@@ -37,6 +38,7 @@ async function selectedSources(){
  if(el('include').checked){
   if(application==='outlook'){
    const item=Office.context.mailbox.item;
+   if(!item)throw Error('Open a message or meeting, or turn off Include the opened item to ask a question without it.');
    if(item.itemId){sources.push({kind:item.itemType===Office.MailboxEnums.ItemType.Appointment?'meeting':'mail',ref:Office.context.mailbox.convertToRestId(item.itemId,Office.MailboxEnums.RestVersion.v2_0)});}
    else {
     const content=await new Promise((resolve,reject)=>item.body.getAsync(Office.CoercionType.Text,r=>r.status===Office.AsyncResultStatus.Succeeded?resolve(r.value):reject(Error('Cannot read the compose body.'))));
