@@ -63,3 +63,7 @@ In **AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, en
 [ACCESS-SETUP.md](ACCESS-SETUP.md) explains Entra registration, delegated permissions, the Microsoft sign-in code versus the local pairing code, and the intended SSO experience. **Teams/Outlook host SSO is not implemented yet.** Live organizational sign-in and Graph acceptance remain pending approved configuration.
 
 The Teams loading correction updates both the native service and tab code. Update the app as well as the Teams package. The local pages pass native macOS HTTPS validation, but the tested Teams client still shows an embedded browser error. A supported Teams HTTPS deployment remains unresolved; the update is not evidence of a working end-to-end Teams integration.
+
+## Microsoft sign-in address correction
+
+If sign-in stops with “Unexpected Microsoft sign-in address,” update from the latest repository ZIP and rerun `bash Setup.command`. Microsoft now returns `https://login.microsoft.com/device` for this commercial device-code flow; the corrected app accepts that exact address. Your Entra redirect settings do not need changing. Verified models and existing settings are reused.

@@ -125,3 +125,7 @@ The local add-in loads `https://localhost:38473/outlook.html`. Development certi
 Read [ACCESS-SETUP.md](ACCESS-SETUP.md) for the two different codes, Entra registration steps, exact requested permissions, and current SSO and live-verification limitations.
 
 For Teams loading followed by a blank tab, use version **0.2.2** and update the native app/service as well as the Teams package. Reopen the tab after updating. The correction allows the required Teams frame parents, sends readiness notifications, and reports SDK/handshake errors. A manifest-only upload cannot update a running older service. Teams-supported HTTPS is still required; trusting a self-signed certificate for Outlook does not establish Teams support.
+
+## “Unexpected Microsoft sign-in address”
+
+The September 25 sign-in correction accepts Microsoft's newer `https://login.microsoft.com/device` verification page for Commercial/GCC device-code sign-in. The previous build rejected that real address. No redirect URI, secret, or permission change is needed for this error. Update from the latest repository using `bash Setup.command`, reopen Onboard, and start a new Microsoft sign-in. Existing verified models, settings and runtime files are reused. The change does not enable arbitrary Microsoft subdomains or change government token/Graph endpoints.
