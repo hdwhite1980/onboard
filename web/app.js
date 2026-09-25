@@ -29,7 +29,7 @@ el('pair').addEventListener('click',async()=>{
   let identity={};
   if(application==='outlook')identity={email:context.userProfile.emailAddress};
   else identity={tenant:context.user?.tenant?.id,account:context.user?.id};
-  const r=await api('pair',{code:el('code').value.trim(),application,...identity},false);token=r.token;el('code').value='';text('status','Connected for 30 minutes as '+r.account+'.');el('submit').disabled=false;
+  const r=await api('pair',{code:el('code').value.trim(),application,...identity},false);token=r.token;el('code').value='';if(el('allow-cloud')){el('allow-cloud').disabled=!r.cloud_available;el('allow-cloud').checked=!!r.cloud_available;text('cloud-destination',r.cloud_available?'Cloud destination: '+r.cloud_name+'. Only locally selected sources are sent.':'Configure GenAI and enable add-in cloud analysis in AI Settings to use it.');}text('status','Connected for 30 minutes as '+r.account+'.');el('submit').disabled=false;
  }catch(e){text('status',e.message);}
 });
 el('disconnect').addEventListener('click',async()=>{generation++;try{if(token)await api('disconnect',{});}catch(_){}token='';activeJob='';el('submit').disabled=true;el('cancel').disabled=true;el('answer').value='';el('sources').replaceChildren();text('status','Disconnected.');});
@@ -67,6 +67,7 @@ function render(result){
   if(s.url){try{const u=new URL(s.url);if(u.protocol==='https:'&&!u.username&&!u.password){const a=document.createElement('a');a.textContent='Open original source';a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';details.append(a);}}catch(_){}}
   el('sources').append(details);
  }
+ for(const s of result.cloud_sources||[]){const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Cloud analysis input · '+s.title;details.append(summary);const p=document.createElement('pre');p.textContent=s.text;details.append(p);el('sources').append(details);}
  text('notes',[...(result.retrieval_notes||[]),result.validation||''].join('\n'));
 }
 el('submit').addEventListener('click',async()=>{
@@ -76,7 +77,7 @@ el('submit').addEventListener('click',async()=>{
   if(!el('public').checked)throw Error('Confirm that the selected input is public and permitted for local processing.');
   const task=el('task').value;const sources=await selectedSources();
   if(!sources.length&&!el('prompt').value.trim())throw Error('Select a source or enter a question.');
-  const r=await api('submit',{task,route:'local',prompt:el('prompt').value,sources,public_attested:true});activeJob=r.id;el('cancel').disabled=false;
+  const r=await api('submit',{task,route:'local',prompt:el('prompt').value,sources,public_attested:true,search_mail:application==='outlook'&&!!el('search-mail')?.checked,allow_cloud:!!el('allow-cloud')?.checked});activeJob=r.id;el('cancel').disabled=false;
   while(current===generation){const j=await api('job',{id:r.id});text('status',j.state);if(['complete','failed','cancelled'].includes(j.state)){render(j.result||{message:j.state});break;}await new Promise(resolve=>setTimeout(resolve,700));}
  }catch(e){text('status',e.message);}finally{if(current===generation){activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;}}
 });
