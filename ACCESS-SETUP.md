@@ -47,8 +47,10 @@ The pairing code is generated in **Onboard → AI Settings → Outlook and Teams
 | Files | `Files.Read` |
 | Teams messages | `Chat.Read`, `ChannelMessage.Read.All` |
 | Transcripts | `OnlineMeetings.Read`, `OnlineMeetingTranscript.Read.All` |
+| Send reviewed emails (optional) | `Mail.Send` |
+| Send reviewed Teams messages (optional) | `Chat.Create`, `ChatMessage.Send`, `User.ReadBasic.All` |
 
-This table describes the code's requests, not a guarantee that every resource/API is available in every government cloud or to every user. `Files.Read` does not grant broad access to every shared enterprise document. Transcripts must exist and be accessible through the supported meeting API. Teams and transcript permissions may require administrator consent. The app currently requests neither mail sending nor mail write access. Draft output is not sent automatically.
+This table describes the code's requests, not a guarantee that every resource/API is available in every government cloud or to every user. `Files.Read` does not grant broad access to every shared enterprise document. Transcripts must exist and be accessible through the supported meeting API. Teams and transcript permissions may require administrator consent. Sending is off by default. Optional reviewed-message settings request delegated Mail.Send for email, or Chat.Create, ChatMessage.Send and User.ReadBasic.All for Teams. No application permissions or Mail.ReadWrite are requested. Draft output is never sent automatically.
 
 ## Intended sign-in experience
 
@@ -79,3 +81,32 @@ This remains a public-content development implementation. Configuring a governme
 Both add-ins use the same 2,048-token local profile, complete-excerpt selection, source-span checks, and optional locally selected evidence handoff to the configured cloud provider. Teams retrieves the current chat or channel (or explicitly supplied authorized sources); the optional Outlook mailbox search remains specific to Outlook. This is not a search across every Teams conversation.
 
 Both use a one-use connection code with no timer, and no Onboard session-duration timer. Codes and connection tokens remain in memory, and disconnect/restart/account-change invalidation, same-account checks, origin binding, replay protection and attempt limits remain. Microsoft sign-in is a separate authorization and may still expire or require reauthentication. Reloading an add-in clears its in-memory connection, so connect once again after fetching an update.
+
+
+## Reviewed messages between Outlook and Teams
+
+Both add-ins contain **Send a message through Outlook or Teams**. Select the source, enter instructions (for example, summarize conversationally and ask for a meeting), and click **Prepare conversational draft**. Choose Email or Teams, enter the recipient, and edit the body. Email creates a new message, not an in-thread reply. Teams creates or reuses a one-to-one chat with a resolved person inside your organization; group/channel destinations and external guests are not supported by this composer.
+
+Before use, add the relevant **delegated** Microsoft Graph permissions to your existing Entra registration and obtain consent required by your tenant:
+
+| Optional feature | Delegated permissions | AI Settings |
+| --- | --- | --- |
+| Email sending | Mail.Send | Send reviewed emails |
+| Teams direct messages and recipient lookup | Chat.Create, ChatMessage.Send, User.ReadBasic.All | Send reviewed Teams messages |
+| Your meeting availability | Calendars.Read (already used for calendar reads) | Calendar |
+
+Enable only the sending features you need, save settings, sign in again, and reconnect the add-in. Existing read permissions for selected mail or Teams sources remain necessary. No redirect URI, client secret or application permission is added by this feature. Microsoft tenant policy may require administrator consent. These endpoints use the discovered Commercial, GCC High or DoD Graph root; live government-tenant acceptance remains unverified.
+
+Use **Add my available meeting times → Check my calendar** to obtain up to three proposals across the next seven days. Set the starting date, time zone, duration and weekday hours. Only your primary calendar is checked; incomplete results fail closed. Busy, tentative, out-of-office, working-elsewhere and unknown statuses block slots. Free/cancelled entries do not. Recipient availability, secondary calendars and holidays without calendar events are not inferred. The time zone and exact dates appear in the message. No meeting is reserved or invitation created.
+
+Confirm that the public message may be shared with the selected recipient, then click **Review message**. The review shows the sender, resolved recipient, subject and complete outgoing text including calendar proposals. Edits require a new review. **Send** is a separate click; prompt text and model output cannot authorize it. Onboard rechecks proposed times before sending and stops if they changed. Availability can still change after this check.
+
+Send requests are bound to the paired session and Microsoft account. A send attempt is consumed once, with a local content-free receipt. Network failures are not automatically retried: if delivery is unconfirmed, check Outlook Sent Items or Teams before preparing another draft. Email API acceptance is not proof of final delivery. Restarting or reconnecting requires a new review.
+
+Microsoft references: [send email](https://learn.microsoft.com/en-us/graph/api/user-sendmail?view=graph-rest-1.0), [send Teams chat message](https://learn.microsoft.com/en-us/graph/api/chat-post-messages?view=graph-rest-1.0), [create/reuse one-to-one chat](https://learn.microsoft.com/en-us/graph/api/chat-post?view=graph-rest-1.0), [calendar view](https://learn.microsoft.com/en-us/graph/api/calendar-list-calendarview?view=graph-rest-1.0).
+
+## If a source quotation cannot be verified
+
+Formatting recovery accepts a complete JSON Markdown block, known original source IDs and an unambiguous whitespace-only quotation difference. Quotes must still pass exact checks against both the supplied excerpt and original source. Changed facts, unknown sources, unseen text and incomplete JSON are rejected. This does not prove the semantic correctness of a draft: review it before sending.
+
+If the model answer fails, the add-in shows copied, verified local source excerpts instead of the unverified answer. When the request and Settings allow cloud assistance, those locally selected sources can receive one cloud analysis attempt, subject to the same provider policy and limits. Invalid cloud output is also withheld. Source excerpts alone cannot enable the message sender; prepare a verified draft first. The Notes area distinguishes formatting failure from quotation mismatch. No private model output is logged for diagnosis.

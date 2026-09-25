@@ -83,3 +83,12 @@ The fixed 5 GiB planning admission gate was removed at the owner’s direction; 
 Teams and Outlook share the 2,048-token local workflow and optional cloud analysis of locally selected evidence. Teams uses accessible messages from the current chat/channel and explicitly supplied sources; Outlook additionally offers related-mail search.
 
 Connection codes now have no time-based expiry and remain one-use. Paired Onboard sessions have no 30-minute timeout. Creating a new code replaces the previous unused code. Disconnect, service restart and account/settings changes invalidate connections; a panel reload clears its in-memory token. Microsoft sign-in rules still apply. Update the app/service and reload both add-in panels to receive these changes.
+
+
+## Reviewed cross-app messages and source-validation recovery
+
+Both add-ins now provide **Send a message through Outlook or Teams**: prepare a conversational draft from selected sources, select a recipient, optionally add actual calendar availability, review the exact message, then click **Send**. Email is a new message; Teams is a one-to-one message to a resolved person inside your organization. No meeting is booked. Optional delegated sending permissions are disabled by default; [access setup](ACCESS-SETUP.md) lists the exact permissions and Settings switches.
+
+Source validation now accepts harmless JSON wrappers and whitespace-only quotation differences while retaining exact original-source checks. If the AI output still fails, copied source excerpts are shown and configured, permitted cloud assistance may analyze the locally selected evidence. Invalid model output is withheld. Update the native app/service and reopen both add-ins. Existing models are reused.
+
+182 Python controls, 25 JavaScript controls and four Rust tests passed. A real offline public-document run completed with 1,105 prompt tokens and valid source quotations. Sending and calendar behavior have controlled tests; live tenant sending is pending consent, sign-in and user-reviewed testing. No real email or Teams message was sent during validation.

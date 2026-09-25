@@ -109,3 +109,15 @@ All 123 Python tests, 15 JavaScript initialization tests and four Rust build tes
 157 Python tests, 17 JavaScript tests and four Rust tests passed. New control tests cover delayed pairing/session use after simulated elapsed days for Outlook and Teams, single-use codes, replacement and explicit invalidation, Microsoft authorization, origin binding, replay rejection, and shared local/cloud-stage routing for mail, Teams chat and channel requests. The app built, its development signature verified, and the updated service installed and started.
 
 No mailbox or provider response was fabricated. These controls are not a claim of live Teams host acceptance or successful cloud-provider connectivity. Existing Teams HTTPS deployment and live integration acceptance limitations remain. The update does not alter Microsoft token expiration or organization policy.
+
+
+## 2026-09-25 — Source recovery and reviewed cross-app messages
+
+- 182 Python tests, 25 JavaScript tests and four Rust tests passed. The Swift app built; staged and installed development signatures verified. The updated service is running with the retained local runtime ready.
+- Real offline generation on published installation documentation completed with 1,105 input tokens. Its returned quotations passed exact source-span validation. This was public documentation, not a mailbox test or evidence of universal answer quality.
+- Formatting controls cover complete Markdown-wrapped JSON, original/alias ID mapping and whitespace-only restoration. Changed facts, unseen quotes, unknown references, wrong field types and incomplete JSON remain rejected. Failed local output falls back to clearly labeled copied excerpts, with one optional permitted cloud analysis attempt.
+- Reviewed-message controls cover recipient resolution, no write during preparation/review, explicit Send, exact reviewed payload, one attempt per review, account/session isolation, replaced reviews, missing permission, unknown delivery without retry, content-free write-ahead receipts and correct government Graph endpoint selection.
+- Calendar controls cover partial/malformed responses, busy/tentative/unknown/all-day events, free/cancelled entries, weekdays, past times, daylight-saving offsets and changed availability before sending. All are controlled fixtures, not live calendar acceptance.
+- Optional Mail.Send and Teams Chat.Create/ChatMessage.Send/User.ReadBasic.All scopes are disabled by default and require owner/admin consent as applicable. The model never chooses recipients or dispatches sends. Email acceptance is not proof of delivery; uncertain sends require checking Sent Items or Teams.
+- No real messages were sent. Graph was disconnected following service replacement. End-to-end mail, Teams and calendar sending remains pending configured permissions, sign-in and user review. Browser-only visual preview was blocked by that browser’s certificate trust; no certificate validation was bypassed. Existing Teams host/HTTPS deployment limitations still apply.
+- Release excludes local settings, credentials, certificates, mailbox data, run evidence, receipts and model weights.

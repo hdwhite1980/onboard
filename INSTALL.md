@@ -151,3 +151,12 @@ All requests still use the public-content development policy. Microsoft mailbox 
 Update the native app/service, then reload the Outlook and Teams panels. Both now expose the shared 2,048-token local workflow and optional cloud-analysis control. Teams applies this to accessible messages in the current chat/channel and explicitly chosen sources. No new mailbox or Teams permissions are granted by this update.
 
 Generate one new code after updating and reconnect each panel. The code no longer has a two-minute timer, and a paired Onboard connection no longer has a 30-minute timer. Codes are still one-use and replaced when another code is generated. Restarting/disconnecting or changing account/settings clears connections; reloading a panel also clears its in-memory token. Microsoft sign-in requirements are unchanged.
+
+
+## Review messages before sending
+
+Update the app/service and reopen both add-ins to see the shared **Send a message through Outlook or Teams** composer. The additional sending settings are off by default. In AI Settings, enable **Send reviewed emails** and/or **Send reviewed Teams messages**, save, and sign in again after adding the delegated permissions described in ACCESS-SETUP.md. Reconnect the add-in with a new one-use code.
+
+Prepare and edit your message, choose a recipient, optionally check your real calendar for meeting times, click **Review message**, then **Send**. Nothing is sent merely by asking the AI. If delivery is unconfirmed, check Sent Items or Teams before creating another draft.
+
+Source-validation errors now distinguish invalid formatting from mismatched quotations. Complete Markdown-wrapped JSON and whitespace-only quote changes can be recovered without changing facts. If validation still fails, copied source excerpts remain visible; configured and permitted cloud analysis may recover an answer. Unverified model text stays withheld.
