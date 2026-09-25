@@ -15,7 +15,7 @@
  for(const id of ['message-date','message-zone','message-duration','message-start','message-end'])field(id).addEventListener('input',()=>{invalidate();availability='';field('message-times-text').textContent='';});
  field('message-clear-times').addEventListener('click',()=>{invalidate();availability='';field('message-times-text').textContent='';});
  field('message-prepare').addEventListener('click',()=>{
-  invalidate();field('task').value='reply';
+  invalidate();field('task').value='reply';if(field('search-mail'))field('search-mail').checked=false;
   if(!field('prompt').value.trim())field('prompt').value='Draft a concise conversational message summarizing the selected source and asking for a meeting to discuss it. Do not invent availability or commitments; verified meeting times will be added separately.';
   field('submit').click();
  });

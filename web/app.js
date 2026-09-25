@@ -59,11 +59,12 @@ async function selectedSources(){
 function render(result){
  globalThis.OnboardMessages?.result(result,activeJob);
  text('status',result.message||result.status||'Complete');
- const claims=(result.claims||[]).map(c=>'['+c.source_id+'] '+c.quote).join('\n\n');
+ const sourceLabels=new Map((result.sources||[]).map((s,i)=>[s.id,'Source '+(i+1)+' · '+s.title]));
+ const claims=(result.claims||[]).filter(c=>result.status!=='source_excerpts'||c.quote.length<=1000).map(c=>'['+(sourceLabels.get(c.source_id)||'Source')+'] '+(c.quote.length<=1000?c.quote:'Exact evidence is available in the supporting source below.')).join('\n\n');
  el('answer').value=[claims,result.answer||''].filter(Boolean).join('\n\n');
  el('sources').replaceChildren();
  for(const s of result.sources||[]){
-  const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent=s.title+' · '+s.id+(s.incomplete?' · partial excerpt':'');details.append(summary);
+  const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent=(sourceLabels.get(s.id)||s.title)+(s.incomplete?' · partial excerpt':'');details.append(summary);
   const p=document.createElement('pre');p.textContent=s.text;details.append(p);
   if(s.url){try{const u=new URL(s.url);if(u.protocol==='https:'&&!u.username&&!u.password){const a=document.createElement('a');a.textContent='Open original source';a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';details.append(a);}}catch(_){}}
   el('sources').append(details);
@@ -71,6 +72,7 @@ function render(result){
  for(const s of result.cloud_sources||[]){const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Cloud analysis input · '+s.title;details.append(summary);const p=document.createElement('pre');p.textContent=s.text;details.append(p);el('sources').append(details);}
  text('notes',[...(result.retrieval_notes||[]),result.validation||''].join('\n'));
 }
+el('task').addEventListener('change',()=>{if(el('search-mail')&&['reply','rewrite','shorten','tone'].includes(el('task').value))el('search-mail').checked=false;});
 el('submit').addEventListener('click',async()=>{
  if(!hostReady)return;
  globalThis.OnboardMessages?.reset();
@@ -79,7 +81,7 @@ el('submit').addEventListener('click',async()=>{
   if(!el('public').checked)throw Error('Confirm that the selected input is public and permitted for local processing.');
   const task=el('task').value;const sources=await selectedSources();
   if(!sources.length&&!el('prompt').value.trim())throw Error('Select a source or enter a question.');
-  const r=await api('submit',{task,route:'local',prompt:el('prompt').value,sources,public_attested:true,search_mail:application==='outlook'&&!!el('search-mail')?.checked,allow_cloud:!!el('allow-cloud')?.checked});activeJob=r.id;el('cancel').disabled=false;
+  const r=await api('submit',{task,route:'local',prompt:el('prompt').value,sources,public_attested:true,search_mail:application==='outlook'&&!!el('search-mail')?.checked,search_mail_explicit:application==='outlook'&&!!el('search-mail')?.checked,allow_cloud:!!el('allow-cloud')?.checked});activeJob=r.id;el('cancel').disabled=false;
   while(current===generation){const j=await api('job',{id:r.id});if(current!==generation)break;text('status',j.state);if(['complete','failed','cancelled'].includes(j.state)){render(j.result||{message:j.state});break;}await new Promise(resolve=>setTimeout(resolve,700));}
  }catch(e){text('status',e.message);}finally{if(current===generation){activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;}}
 });
