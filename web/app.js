@@ -18,9 +18,9 @@ async function init(){
    await Office.onReady();if(!Office.context.mailbox?.item)throw Error('Open a message or meeting in Outlook to use this add-in.');
    context=Office.context.mailbox;hostReady=true;text('context','Connected to your opened Outlook item.');
   }else{
-   await microsoftTeams.app.initialize();context=await microsoftTeams.app.getContext();if(new URLSearchParams(location.search).has('configure')){microsoftTeams.pages.config.registerOnSaveHandler(async event=>{await microsoftTeams.pages.config.setConfig({entityId:'onboard',suggestedDisplayName:'Onboard AI',contentUrl:location.origin+location.pathname,websiteUrl:location.origin+location.pathname});event.notifySuccess();});microsoftTeams.pages.config.setValidityState(true);}hostReady=true;text('context','Teams context available. Only explicitly selected, accessible sources are retrieved.');
+   context=await OnboardTeams.initialize();hostReady=true;text('context','Teams context available. Only explicitly selected, accessible sources are retrieved.');
   }
- }catch(_){text('context','Open this integration inside '+(application==='outlook'?'Outlook':'Teams')+'. Browser previews do not establish a host connection.');}
+ }catch(error){hostReady=false;const message=application==='teams' ? 'Teams connection failed: '+error.message : 'Open this integration inside Outlook. Browser previews do not establish a host connection.';text('context',message);text('status',message);}
  el('pair').disabled=!hostReady;
 }
 el('pair').addEventListener('click',async()=>{
