@@ -103,3 +103,9 @@ All 123 Python tests, 15 JavaScript initialization tests and four Rust build tes
 - Added actual Graph related-message search, tokenizer-sized complete excerpts, local selection/citation checks, settings and per-request cloud controls, bounded cloud payload and daily quota, cancellation/account/session rechecks, and source-visible failure behavior. Boundary tests use clearly labeled test fixtures and do not represent live cloud or mailbox acceptance.
 - A real configured-provider check using public documentation returned HTTP 503, including after correcting full endpoint URL handling. No successful cloud answer or credential acceptance is claimed.
 - Distribution excludes settings, credentials, certificates, private prompts, mailbox data, local run evidence and model weights.
+
+## 2026-09-25 — Teams parity and connection lifetime
+
+157 Python tests, 17 JavaScript tests and four Rust tests passed. New control tests cover delayed pairing/session use after simulated elapsed days for Outlook and Teams, single-use codes, replacement and explicit invalidation, Microsoft authorization, origin binding, replay rejection, and shared local/cloud-stage routing for mail, Teams chat and channel requests. The app built, its development signature verified, and the updated service installed and started.
+
+No mailbox or provider response was fabricated. These controls are not a claim of live Teams host acceptance or successful cloud-provider connectivity. Existing Teams HTTPS deployment and live integration acceptance limitations remain. The update does not alter Microsoft token expiration or organization policy.

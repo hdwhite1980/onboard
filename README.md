@@ -77,3 +77,9 @@ The latest app corrects a blocked Microsoft Office.js dependency that left Outlo
 The local model now supports a bounded 2,048-token window (1,536 input including instructions, 512 output). Outlook can search related mail on request, then local AI selects source-backed evidence. Larger requests can use the configured cloud provider when add-in cloud assistance and per-request permission are enabled. The result shows partial coverage, route, and cloud input. Small/medium requests that fit stay local. Public-content development policy remains enforced. See [setup details](ACCESS-SETUP.md) and [update instructions](INSTALL.md).
 
 The fixed 5 GiB planning admission gate was removed at the owner’s direction; live pressure, swap, thermal, protected-reserve and process-memory guards remain. Source citations passed on an actual 1,086-input-token public-document run. Full mailbox relevance and cloud end-to-end acceptance remain to be verified in the configured environment.
+
+## Teams parity and connections without a timer
+
+Teams and Outlook share the 2,048-token local workflow and optional cloud analysis of locally selected evidence. Teams uses accessible messages from the current chat/channel and explicitly supplied sources; Outlook additionally offers related-mail search.
+
+Connection codes now have no time-based expiry and remain one-use. Paired Onboard sessions have no 30-minute timeout. Creating a new code replaces the previous unused code. Disconnect, service restart and account/settings changes invalidate connections; a panel reload clears its in-memory token. Microsoft sign-in rules still apply. Update the app/service and reload both add-in panels to receive these changes.

@@ -134,7 +134,7 @@ The September 25 sign-in correction accepts Microsoft's newer `https://login.mic
 
 Update the native app/service and reopen the Outlook add-in. A previous security policy blocked the exact `https://ajax.aspnetcdn.com/ajax/3.5/MicrosoftAjax.js` dependency loaded by Microsoft's Office.js SDK. The correction permits this file only for the Outlook page. Startup now times out with a visible explanation and a **Retry Outlook connection** button instead of leaving Connect disabled indefinitely. A mailbox identity is required for pairing; a selected message is required only when including that message in a request.
 
-After a service update, sign in to Microsoft again in Onboard Settings and generate a fresh Outlook pairing code. Codes expire after two minutes. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.
+After a service update, sign in to Microsoft again in Onboard Settings and generate a fresh Outlook pairing code. Codes have no time-based expiry and can be used once. Generating another code replaces the previous unused code. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.
 
 ## Outlook context limits and cloud analysis
 
@@ -145,3 +145,9 @@ Outlook can search for related mail when you submit a question. Clear **Find rel
 Small and medium requests that fit stay local. For larger packets, **AI Settings → Outlook and Teams connections → Allow cloud analysis of locally selected add-in content** enables a second stage with the configured GenAI provider. The add-in also shows a per-request cloud checkbox and destination. Only sources cited by the local model and checked against retrieved text can be sent. Up to five locally selected sources are eligible; the provider’s input limit can require excerpts or further omissions. The result exposes the cloud input and route. If local selection cannot be verified, no email is sent. Cloud errors retain the local result and explain the failure.
 
 All requests still use the public-content development policy. Microsoft mailbox access is not permission to send Internal, FCI, CUI or otherwise restricted content to a provider. Set the approved provider endpoint/model and key in Settings; a key for one service cannot be assumed valid for another. Compatible endpoints can be either an API base or a complete `/chat/completions` URL.
+
+## Teams parity and connection-code timeout removal
+
+Update the native app/service, then reload the Outlook and Teams panels. Both now expose the shared 2,048-token local workflow and optional cloud-analysis control. Teams applies this to accessible messages in the current chat/channel and explicitly chosen sources. No new mailbox or Teams permissions are granted by this update.
+
+Generate one new code after updating and reconnect each panel. The code no longer has a two-minute timer, and a paired Onboard connection no longer has a 30-minute timer. Codes are still one-use and replaced when another code is generated. Restarting/disconnecting or changing account/settings clears connections; reloading a panel also clears its in-memory token. Microsoft sign-in requirements are unchanged.
