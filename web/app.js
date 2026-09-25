@@ -32,7 +32,7 @@ el('pair').addEventListener('click',async()=>{
   const r=await api('pair',{code:el('code').value.trim(),application,...identity},false);token=r.token;el('code').value='';if(el('allow-cloud')){el('allow-cloud').disabled=!r.cloud_available;el('allow-cloud').checked=!!r.cloud_available;text('cloud-destination',r.cloud_available?'Cloud destination: '+r.cloud_name+'. Only locally selected sources are sent.':'Configure GenAI and enable add-in cloud analysis in AI Settings to use it.');}text('status','Connected as '+r.account+'. No Onboard connection timeout.');el('submit').disabled=false;
  }catch(e){text('status',e.message);}
 });
-el('disconnect').addEventListener('click',async()=>{generation++;try{if(token)await api('disconnect',{});}catch(_){}token='';activeJob='';el('submit').disabled=true;el('cancel').disabled=true;el('answer').value='';el('sources').replaceChildren();text('status','Disconnected.');});
+el('disconnect').addEventListener('click',async()=>{generation++;globalThis.OnboardMessages?.reset();try{if(token)await api('disconnect',{});}catch(_){}token='';activeJob='';el('submit').disabled=true;el('cancel').disabled=true;el('answer').value='';el('sources').replaceChildren();text('status','Disconnected.');});
 async function selectedSources(){
  const sources=[];
  if(el('include').checked){
@@ -57,6 +57,7 @@ async function selectedSources(){
  return sources;
 }
 function render(result){
+ globalThis.OnboardMessages?.result(result,activeJob);
  text('status',result.message||result.status||'Complete');
  const claims=(result.claims||[]).map(c=>'['+c.source_id+'] '+c.quote).join('\n\n');
  el('answer').value=[claims,result.answer||''].filter(Boolean).join('\n\n');
@@ -72,15 +73,16 @@ function render(result){
 }
 el('submit').addEventListener('click',async()=>{
  if(!hostReady)return;
+ globalThis.OnboardMessages?.reset();
  const current=++generation;el('submit').disabled=true;el('answer').value='';el('sources').replaceChildren();
  try{
   if(!el('public').checked)throw Error('Confirm that the selected input is public and permitted for local processing.');
   const task=el('task').value;const sources=await selectedSources();
   if(!sources.length&&!el('prompt').value.trim())throw Error('Select a source or enter a question.');
   const r=await api('submit',{task,route:'local',prompt:el('prompt').value,sources,public_attested:true,search_mail:application==='outlook'&&!!el('search-mail')?.checked,allow_cloud:!!el('allow-cloud')?.checked});activeJob=r.id;el('cancel').disabled=false;
-  while(current===generation){const j=await api('job',{id:r.id});text('status',j.state);if(['complete','failed','cancelled'].includes(j.state)){render(j.result||{message:j.state});break;}await new Promise(resolve=>setTimeout(resolve,700));}
+  while(current===generation){const j=await api('job',{id:r.id});if(current!==generation)break;text('status',j.state);if(['complete','failed','cancelled'].includes(j.state)){render(j.result||{message:j.state});break;}await new Promise(resolve=>setTimeout(resolve,700));}
  }catch(e){text('status',e.message);}finally{if(current===generation){activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;}}
 });
-el('cancel').addEventListener('click',async()=>{generation++;try{if(activeJob)await api('cancel',{id:activeJob});text('status','Request cancelled.');}catch(e){text('status',e.message);}activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;});
+el('cancel').addEventListener('click',async()=>{generation++;globalThis.OnboardMessages?.reset();try{if(activeJob)await api('cancel',{id:activeJob});text('status','Request cancelled.');}catch(e){text('status',e.message);}activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;});
 window.addEventListener('pagehide',()=>{token='';generation++;});
 init();
