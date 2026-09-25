@@ -16,7 +16,7 @@
  field('message-clear-times').addEventListener('click',()=>{invalidate();availability='';field('message-times-text').textContent='';});
  field('message-prepare').addEventListener('click',()=>{
   invalidate();field('task').value='reply';if(field('search-mail'))field('search-mail').checked=false;
-  if(!field('prompt').value.trim())field('prompt').value='Draft a concise conversational message summarizing the selected source and asking for a meeting to discuss it. Do not invent availability or commitments; verified meeting times will be added separately.';
+  if(!field('prompt').value.trim())field('prompt').value='Draft a concise conversational reply to the selected source. Do not propose a meeting unless I ask for one. Do not invent availability, commitments or completed actions.';
   field('submit').click();
  });
  field('message-times').addEventListener('click',async()=>{
