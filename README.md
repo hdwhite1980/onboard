@@ -92,3 +92,12 @@ Both add-ins now provide **Send a message through Outlook or Teams**: prepare a 
 Source validation now accepts harmless JSON wrappers and whitespace-only quotation differences while retaining exact original-source checks. If the AI output still fails, copied source excerpts are shown and configured, permitted cloud assistance may analyze the locally selected evidence. Invalid model output is withheld. Update the native app/service and reopen both add-ins. Existing models are reused.
 
 182 Python controls, 25 JavaScript controls and four Rust tests passed. A real offline public-document run completed with 1,105 prompt tokens and valid source quotations. Sending and calendar behavior have controlled tests; live tenant sending is pending consent, sign-in and user-reviewed testing. No real email or Teams message was sent during validation.
+
+
+## Suggest a reply correction
+
+Reply drafting now uses the selected email without automatically searching unrelated mail or adding its thread. **Also search related emails** starts off and must be explicitly selected. Generic reply instructions are not search topics, and explicit searches require all selected topic terms. Specific additional sources remain available.
+
+Email tracking URLs and standard footer blocks are excluded from AI context unless the question asks about them. Original source text remains available; no email link is opened. The model selects numbered evidence references, and Onboard attaches and checks the exact text. A narrow JSON structural repair handles one observed extra brace without changing field values. Unknown references, ambiguous aliases, conflicting quotes, incomplete output and copied placeholders still fail. The interface shows source titles instead of long mailbox IDs.
+
+202 Python checks, 27 JavaScript checks and four Rust tests passed. A captured real offline model response on public installation documentation produced a first-person acknowledgment and passed the corrected parser/reference validation. This is not a live Outlook mailbox acceptance claim. Update the native app, sign in again after the service restart, reconnect Outlook, open the intended email and choose **Suggest a reply** with **Include the opened item** on and **Also search related emails** off.

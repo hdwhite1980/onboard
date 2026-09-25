@@ -160,3 +160,10 @@ Update the app/service and reopen both add-ins to see the shared **Send a messag
 Prepare and edit your message, choose a recipient, optionally check your real calendar for meeting times, click **Review message**, then **Send**. Nothing is sent merely by asking the AI. If delivery is unconfirmed, check Sent Items or Teams before creating another draft.
 
 Source-validation errors now distinguish invalid formatting from mismatched quotations. Complete Markdown-wrapped JSON and whitespace-only quote changes can be recovered without changing facts. If validation still fails, copied source excerpts remain visible; configured and permitted cloud analysis may recover an answer. Unverified model text stays withheld.
+
+
+## Reply drafting scope correction
+
+Update Onboard and reload the Outlook add-in. **Suggest a reply** now reads the selected email without automatically searching the mailbox or adding its thread. **Also search related emails** starts unchecked and must be explicitly selected to add search context. Additional specific sources can still be supplied.
+
+Tracking-link and standard footer text is omitted from email AI context, with original text retained for review. The model cites supplied numbered evidence references; Onboard attaches and verifies the exact source text. Unknown references remain blocked. This addresses unrelated promotional messages and fragile quotation copying without disabling source checks. Source titles replace long mailbox IDs in the answer.
