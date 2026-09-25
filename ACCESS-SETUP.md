@@ -172,3 +172,11 @@ The queue holds at most 20 pending drafts on this Mac and is not saved to disk. 
 A meeting-request category is organizational metadata: it does not invent availability or book a meeting. Use actual calendar data when including proposed times. Teams channel posting, in-thread email replies from a Teams handoff, automatic opening of the other add-in, and Microsoft host SSO remain outside this update.
 
 Updated combined validation: 235 Python tests, 54 JavaScript tests, and four Rust tests pass. Tests include destination/account isolation, public-content checks, duplicate transfer prevention, single-claim handling, disconnect cleanup, native composer contracts, and edit/review gating. Live in-host handoff and composer acceptance remain pending; no real messages were sent.
+
+## Local AI stopped while summarizing
+
+A guard stop is not a summary. No partial model answer is released. The updated service displays a specific reason and a short diagnostic code, such as `GENERATION_TIMEOUT`, `MEMORY_RESERVE`, `EXISTING_SWAP`, `MODEL_MONITOR_STALE`, or `CLEANUP_UNCONFIRMED`. Follow the action in that message. Do not delete the model or reinstall everything solely because a request stopped.
+
+The most recent supervised run leaves one private `product/integrated/state/last-local-run.json` record in the installed source workspace. It contains the outcome code, cleanup confirmation and numeric runtime measurements; it excludes prompts, email/Teams content, model output, account identifiers and raw exceptions. The next supervised run replaces it. Temporary request contents are still deleted after each request. This record is excluded from published source archives.
+
+The memory, temperature, monitoring, runtime and cleanup limits remain enforced. Native Ask AI may use configured and explicitly permitted cloud assistance after a clean resource or timeout stop. Add-in summarization still requires locally verified source selection before automatic cloud analysis; a failed local request does not silently send the email to a cloud provider.

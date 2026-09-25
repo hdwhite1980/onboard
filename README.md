@@ -129,3 +129,7 @@ Both add-ins now have **Transfer this draft to the other add-in** and **Local dr
 The queue holds at most 20 pending drafts. Service restart, sign-out, or settings changes clear it. Explicit source disconnect removes that session's outgoing transfers. Closing the panel alone leaves transferred drafts available. This is temporary local draft memory, not a permanent knowledge index. No original source archive or account token is put in the queue. Duplicate retries do not create duplicate transfers, and a destination draft is claimed once.
 
 Combined validation: 235 Python tests, 54 JavaScript tests, and four Rust tests passed. Live in-host acceptance is pending. No real email or Teams message was sent. See ACCESS-SETUP.md for the exact handoff workflow and limitations.
+
+### Local runtime diagnostics update
+
+Local guard stops now show a specific reason and action instead of a combined resource/runtime/lifecycle error. Only a content-free latest-run diagnostic is retained locally. Runtime limits are unchanged.
