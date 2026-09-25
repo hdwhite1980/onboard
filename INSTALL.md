@@ -40,7 +40,7 @@ If macOS or organizational policy blocks the development app, follow the organiz
 
 ## Connections and add-ins
 
-Configure GCC High/DoD, approved tenant/client IDs and Microsoft sign-in under **AI Settings → Microsoft 365**. Choose an installed browser and search engine under **AI Settings → Internet access**, then save. General searches open in that browser and require no search API key. Browser pages are not automatically read back into Ask AI. Optional GenAI credentials go in Settings, not in repository files. Secrets are saved using Keychain. The current app has no commercial/GCC sign-in option.
+Use Automatic tenant detection with approved tenant/client IDs and Microsoft sign-in under **AI Settings → Microsoft 365**. Choose an installed browser and search engine under **AI Settings → Internet access**, then save. General searches open in that browser and require no search API key. Browser pages are not automatically read back into Ask AI. Optional GenAI credentials go in Settings, not in repository files. Secrets are saved using Keychain. Automatic detection selects Commercial, GCC, GCC High or DoD from Microsoft metadata; explicit selections are also checked. Approved registrations and consent in the chosen cloud remain required.
 
 The model remains on the Mac after setup. Local AI can run offline; web search, Microsoft 365 retrieval and cloud AI require their configured online connections.
 
@@ -119,3 +119,9 @@ Use `Onboard-Teams.zip` version **0.2.1** or later. Version 0.2.0 incorrectly in
 ## Outlook localhost certificate
 
 The local add-in loads `https://localhost:38473/outlook.html`. Development certificates must be explicitly trusted on each test Mac; native app signing does not supply HTTPS trust. Use **AI Settings → Show development certificate** to locate that installation's certificate. Before granting trust, verify that it matches the certificate served by Onboard and that its localhost name and dates are valid. An authorized local development trust can be restricted to SSL for localhost in the user's Keychain. This is a machine-specific approval, not something distributed inside the Teams ZIP. Restart the add-in or Outlook after the trust change. Certificate checks must remain enabled; a production rollout needs an approved certificate deployment and renewal process.
+
+## Microsoft access and Teams loading
+
+Read [ACCESS-SETUP.md](ACCESS-SETUP.md) for the two different codes, Entra registration steps, exact requested permissions, and current SSO and live-verification limitations.
+
+For Teams loading followed by a blank tab, use version **0.2.2** and update the native app/service as well as the Teams package. Reopen the tab after updating. The correction allows the required Teams frame parents, sends readiness notifications, and reports SDK/handshake errors. A manifest-only upload cannot update a running older service. Teams-supported HTTPS is still required; trusting a self-signed certificate for Outlook does not establish Teams support.

@@ -46,12 +46,20 @@ The source is provided as an archive to preserve its directory layout through br
 ## Outlook and Teams
 
 - [outlook.xml](outlook.xml): Outlook add-in manifest.
-- [Onboard-Teams.zip](Onboard-Teams.zip): corrected Teams **0.2.1** package, validated against the declared Microsoft schema; keep this ZIP intact.
+- [Onboard-Teams.zip](Onboard-Teams.zip): Teams **0.2.2** package, validated against the declared Microsoft schema; keep this ZIP intact.
 - [Onboard-Web-Assets.zip](Onboard-Web-Assets.zip) and [web/](web/): interfaces and icons.
 - [deployment-status.json](deployment-status.json): current add-in deployment status.
 
-The add-ins currently use `https://localhost:38473`, the Onboard service on the same machine running the client. GitHub stores these files; it is not currently hosting their pages. Installing Onboard AI does not install the add-ins. HTTPS trust, approved tenant deployment and actual host integration tests remain required. See INSTALL.md for GCC High/DoD limitations.
+The add-ins currently use `https://localhost:38473`, the Onboard service on the same machine running the client. GitHub stores these files; it is not currently hosting their pages. Installing Onboard AI does not install the add-ins. HTTPS trust, approved tenant deployment and actual host integration tests remain required. See [ACCESS-SETUP.md](ACCESS-SETUP.md) for Microsoft access setup and current limitations.
 
 ## What has been verified
 
 [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) records successful setup/build in a separate folder on the development Mac. A second physical Mac and actual Outlook/Teams/Graph/cloud acceptance remain pending. The current content policy permits only user-declared PUBLIC data; sensitive enterprise content is not enabled.
+
+## Microsoft tenant detection and access
+
+In **AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, enter the organization-approved tenant and application IDs, select required read capabilities and save. **Detect tenant environment** previews the result; sign-in also detects automatically. Microsoft metadata selects Commercial, GCC, GCC High or DoD and its corresponding Graph endpoint. Conflicting metadata or a blocked request stops sign-in; tokens are not retried through another cloud.
+
+[ACCESS-SETUP.md](ACCESS-SETUP.md) explains Entra registration, delegated permissions, the Microsoft sign-in code versus the local pairing code, and the intended SSO experience. **Teams/Outlook host SSO is not implemented yet.** Live organizational sign-in and Graph acceptance remain pending approved configuration.
+
+The Teams loading correction updates both the native service and tab code. Update the app as well as the Teams package. The local pages pass native macOS HTTPS validation, but the tested Teams client still shows an embedded browser error. A supported Teams HTTPS deployment remains unresolved; the update is not evidence of a working end-to-end Teams integration.
