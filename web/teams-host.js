@@ -35,5 +35,19 @@
    throw error;
   }
  }
- root.OnboardTeams={initialize};
+ async function current(){return bounded(root.microsoftTeams.app.getContext(),5000,'Teams did not provide the current conversation.');}
+ function conversation(context){
+  if(context.channel?.id&&context.team?.groupId)return {kind:'channel',ref:context.team.groupId+'|'+context.channel.id};
+  if(context.chat?.id)return {kind:'chat',ref:context.chat.id};
+  throw Error('Open Onboard as a tab in a chat or channel. A personal tab has no selected conversation.');
+ }
+ async function useDraft(recipient,message){
+  if(!/^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/.test(recipient))throw Error('Enter the Teams work address of the person who should receive this draft.');
+  if(!message.trim()||message.length>12000)throw Error('Review a draft of up to 12,000 characters.');
+  const chat=root.microsoftTeams?.chat;
+  if(!chat?.isSupported())throw Error('This Teams client cannot open a draft here. Copy the reviewed text into Teams instead.');
+  await chat.openChat({user:recipient,message});
+  return 'Draft opened in Teams. Review the recipient and message, then send in Teams.';
+ }
+ root.OnboardTeams={initialize,current,conversation,useDraft};
 })(globalThis);
