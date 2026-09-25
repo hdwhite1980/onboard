@@ -140,3 +140,23 @@ No mailbox or provider response was fabricated. These controls are not a claim o
 - Code-free connect controls share the same implementation in Outlook and Teams. Legacy code fallback remains under Advanced.
 - Reply display separates editable text from expandable original evidence. Explicit no-reply notices return deterministic advice without model/cloud execution or enabling message review. Conversational drafts no longer request meetings implicitly.
 - Tests use declared control fixtures, not fabricated live mailbox data. This update does not claim Microsoft host SSO, live in-host approval acceptance or successful model analysis of the user's specific notice. No user email body, ID or account data is included in these artifacts.
+
+
+## App-first Outlook and Teams update
+
+Outlook now reads the opened item directly from Office. Related-mail search and extra thread/calendar context through Graph are explicit options. After reviewing the generated text, open a native Outlook reply or insert it into the current draft, then send in Outlook. The updated Outlook manifest requests ReadWriteItem for composing.
+
+In a Teams chat/channel tab, load the recent messages and select one to work with. Graph supplies the authorized text; a separate option includes recent conversation context. Open a reviewed draft in a one-to-one Teams chat for a recipient you choose, then send in Teams. Personal tabs have no current conversation, channel replies are not listed, and this update does not add a right-click message extension.
+
+Update the app with Setup.command and update/reload both add-ins: Outlook 0.3.0.0 and Teams 0.3.0. The existing model is reused. Native approval remains the connection method; Microsoft host SSO is still pending. See [ACCESS-SETUP.md](ACCESS-SETUP.md#app-first-add-ins-september-25-2026).
+
+Validation: 220 Python tests, 45 JavaScript tests, and four Rust tests passed. The development app was built and installed with a verified ad hoc signature. Actual Outlook/Teams composer acceptance is pending; no real messages were sent.
+
+
+### Outlook ↔ Teams through Onboard
+
+Both add-ins now have **Transfer this draft to the other add-in** and **Local draft inbox**. Onboard holds the reviewed draft in memory, categorized as a reply, summary, meeting request, follow-up, or other. The destination add-in must connect to the same local Onboard instance and Microsoft account. It opens a native email or one-to-one Teams draft for your final review and sending; Graph is not used to send this handoff.
+
+The queue holds at most 20 pending drafts. Service restart, sign-out, or settings changes clear it. Explicit source disconnect removes that session's outgoing transfers. Closing the panel alone leaves transferred drafts available. This is temporary local draft memory, not a permanent knowledge index. No original source archive or account token is put in the queue. Duplicate retries do not create duplicate transfers, and a destination draft is claimed once.
+
+Combined validation: 235 Python tests, 54 JavaScript tests, and four Rust tests passed. Live in-host acceptance is pending. No real email or Teams message was sent. See ACCESS-SETUP.md for the exact handoff workflow and limitations.

@@ -131,3 +131,44 @@ The response box contains the proposed draft only. Source quotations and full re
 **Suggest a reply** recognizes a standalone “Please do not reply to this email” notice in the selected email and recommends against replying. It does not generate a meeting invitation or enable sending that advice as a draft. Choose **Draft follow-up** if you want a separate support message, then select a trusted recipient and review it. The conversational-draft button no longer asks for a meeting by default; available times remain an explicit option. No email links are followed to establish whether a notice is genuine.
 
 The approval and display changes have automated control tests. Actual approval inside Outlook and Teams, and the user's specific email, still require an acceptance check after updating/reopening the apps. These changes do not implement Microsoft host SSO.
+
+## App-first add-ins (September 25, 2026)
+
+Update the native app/service and both add-in packages together. Outlook's manifest is now **0.3.0.0** and requests **ReadWriteItem** so the add-in can insert a reviewed draft into the current composer. Teams' package is **0.3.0**. Existing models and provider settings are reused.
+
+### Outlook
+
+- **Use the opened Outlook item directly** is the default. Office supplies its text; Graph is not used to fetch that item. Attachments are not included automatically.
+- **Add the saved thread or calendar details through Graph** and **Also search related emails** are separate, optional choices. They require the corresponding Graph permissions. With neither selected and no additional sources entered, only the opened item is used.
+- After generating a response, edit it, select **I reviewed this text**, and choose **Open reply / insert draft in Outlook**. Read mode opens a reply to the sender. Compose mode inserts at the cursor or replaces selected text; it does not replace the entire body. You review the recipient and click Send in Outlook.
+- Opening the native reply or inserting text does not require Graph `Mail.Send`. The separate Graph sending section still does. Changing the opened item clears previous output and disables its draft action.
+
+### Teams
+
+- Add Onboard as a tab within the chat or channel where you work. Choose **Load messages from this conversation**, then select the particular message. Graph retrieves authorized message text because Teams tab context supplies identifiers rather than message bodies.
+- **Recent conversation** is an explicit broader option, bounded to 30 messages or channel root posts. Channel replies and meeting audio are not included. A personal tab has no current conversation.
+- Review the generated text, enter the intended recipient's Teams work sign-in address, select **I reviewed this text**, and choose **Open draft in Teams**. The supported Teams composer API opens a one-to-one draft; sending remains your action inside Teams. This does not create a channel-thread reply or add a right-click message extension.
+- Native composing does not use Graph `ChatMessage.Send`; the separate Graph sending workflow still requires its existing permissions. Unsupported host capabilities report an error without silently sending through Graph.
+
+Both integrations still use explicit native Onboard approval, with a code only as an advanced fallback. Microsoft host SSO is not implemented in this update. Existing content policy and cloud-routing controls remain enforced. Missing access, unavailable host APIs, or failed retrieval produce errors rather than sample content.
+
+API references: [Outlook current-item and reply APIs](https://learn.microsoft.com/en-us/javascript/api/outlook/office.messageread?view=outlook-js-preview), [Outlook compose body APIs](https://learn.microsoft.com/en-us/javascript/api/outlook/office.body?view=outlook-js-preview), [Teams chat composer](https://learn.microsoft.com/en-us/javascript/api/@microsoft/teams-js/chat?view=msteams-client-js-latest).
+
+Validation: 220 Python tests, 45 JavaScript tests, and four Rust tests passed. Automated host contracts use explicitly identified test fixtures; runtime behavior uses actual Office/Teams/Graph data. No live email or Teams message was sent. Acceptance inside the user's Outlook and Teams clients remains to be completed.
+
+### Outlook ↔ Teams through Onboard's local draft inbox
+
+Both add-ins now share an account-scoped, in-memory draft queue in the installed Onboard service. This app-to-app path does not call Graph to send email or Teams messages and does not require the optional Graph sending permissions.
+
+1. Generate and edit a response in the source add-in.
+2. Expand **Transfer this draft to the other add-in**. Its purpose defaults from the selected task where possible; choose Reply, Summary, Meeting request, Follow-up, or Other. Enter an optional intended recipient and subject/label. Review and confirm, then transfer.
+3. Open the other app's Onboard add-in and connect to the same Onboard instance with the same Microsoft account. Expand **Local draft inbox**, refresh, and choose the categorized draft.
+4. Review/edit the recipient, subject, and text. Choose **Open draft**. Outlook opens a new email; Teams opens a one-to-one chat draft. Use that application's Send control after your final review.
+
+Onboard is the conduit. The add-ins do not communicate through an unauthenticated browser channel. Only the reviewed draft and its routing fields are queued; original emails, entire chat histories, and tokens are not copied into the queue. No model output can trigger a transfer or send automatically.
+
+The queue holds at most 20 pending drafts on this Mac and is not saved to disk. Closing a source panel leaves its transferred draft available. Explicit source disconnect removes that session's outgoing transfers; sign-out, settings changes, and service restart clear the queue. Opening a destination draft claims its transfer once. If the native composer fails after that claim, the text stays visible in the panel for retry or manual copying. This is temporary draft handoff, not a permanent knowledge store or semantic memory index.
+
+A meeting-request category is organizational metadata: it does not invent availability or book a meeting. Use actual calendar data when including proposed times. Teams channel posting, in-thread email replies from a Teams handoff, automatic opening of the other add-in, and Microsoft host SSO remain outside this update.
+
+Updated combined validation: 235 Python tests, 54 JavaScript tests, and four Rust tests pass. Tests include destination/account isolation, public-content checks, duplicate transfer prevention, single-claim handling, disconnect cleanup, native composer contracts, and edit/review gating. Live in-host handoff and composer acceptance remain pending; no real messages were sent.
