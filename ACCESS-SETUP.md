@@ -62,7 +62,7 @@ The desired product flow is: open Onboard in Teams or Outlook, use that host's s
 
 For Teams, configure an Entra registration and the app manifest for supported host authentication; see [Teams SSO](https://learn.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/authentication/tab-sso-overview) and [registration requirements](https://learn.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/authentication/tab-sso-register-aad). For Outlook, use Microsoft's supported MSAL nested app authentication on compatible clients, with an explicit supported fallback; see [Outlook authentication guidance](https://learn.microsoft.com/en-us/office/dev/add-ins/outlook/faq-nested-app-auth-outlook-legacy-tokens). Cloud and client support must be checked for the actual deployment.
 
-The local connection also needs an authenticated, user-approved binding. A display name, email address or Teams context object is not proof of identity and cannot safely replace the code on its own. The current same-account check is only a consistency check after the local pairing authorization.
+The local connection also needs an authenticated, user-approved binding. A display name, email address or Teams context object is not proof of identity and cannot safely replace the code on its own. The current same-account check is a consistency check; approval in the native app grants the connection. The optional legacy code grants the same limited session.
 
 The organization should configure IDs, approved permissions, host URLs, certificates and deployment once for its users. Users should not have to create their own app registration. This SSO and managed onboarding work remains to be implemented; it is not enabled by the Teams loading correction.
 
@@ -84,7 +84,7 @@ This remains a public-content development implementation. Configuring a governme
 
 Both add-ins use the same 2,048-token local profile, complete-excerpt selection, source-span checks, and optional locally selected evidence handoff to the configured cloud provider. Teams retrieves the current chat or channel (or explicitly supplied authorized sources); the optional Outlook mailbox search remains specific to Outlook. This is not a search across every Teams conversation.
 
-Both use a one-use connection code with no timer, and no Onboard session-duration timer. Codes and connection tokens remain in memory, and disconnect/restart/account-change invalidation, same-account checks, origin binding, replay protection and attempt limits remain. Microsoft sign-in is a separate authorization and may still expire or require reauthentication. Reloading an add-in clears its in-memory connection, so connect once again after fetching an update.
+Both use native-approved, account-matched connections without typing a code. An advanced one-use code fallback remains available without a timer. There is no Onboard session-duration timer. Approval requests, optional codes and connection tokens remain in memory, and disconnect/restart/account-change invalidation, same-account checks, origin binding, replay protection and attempt limits remain. Microsoft sign-in is a separate authorization and may still expire or require reauthentication. Reloading an add-in clears its in-memory connection, so connect once again after fetching an update.
 
 
 ## Reviewed messages between Outlook and Teams
