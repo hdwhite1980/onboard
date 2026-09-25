@@ -46,7 +46,7 @@ The source is provided as an archive to preserve its directory layout through br
 ## Outlook and Teams
 
 - [outlook.xml](outlook.xml): Outlook add-in manifest.
-- [Onboard-Teams.zip](Onboard-Teams.zip): Teams package; keep this ZIP intact.
+- [Onboard-Teams.zip](Onboard-Teams.zip): corrected Teams **0.2.1** package, validated against the declared Microsoft schema; keep this ZIP intact.
 - [Onboard-Web-Assets.zip](Onboard-Web-Assets.zip) and [web/](web/): interfaces and icons.
 - [deployment-status.json](deployment-status.json): current add-in deployment status.
 

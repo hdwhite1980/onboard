@@ -111,3 +111,11 @@ If diagnostics reports a verified Onboard host, run `bash Setup.command` from th
 An app update can leave an older service running with the previous state-folder path. The verifier now accepts that specific state mismatch only when the running process still holds its original same-user `service.lock`, its signed Onboard bundle and interpreter verify, and its launch arguments match the expected host and port. A leftover lock file, a symlink, or a lock held by another process is insufficient.
 
 The latest setup and Start/Stop controls use this recovery. Quit the Onboard app window, download and extract the latest repository ZIP, and run `bash Setup.command` from that folder. The helper can stop the verified older host before updating the app. It leaves the older state folder intact. Active model child processes still require waiting for the request to finish before shutdown.
+
+## Teams “Manifest parsing error message unavailable”
+
+Use `Onboard-Teams.zip` version **0.2.1** or later. Version 0.2.0 incorrectly included `packageName`, which the declared Teams 1.17 schema disallows, and used `groupchat` instead of the required `groupChat` scope. The corrected package keeps manifest.json and both required PNG icons at the ZIP root and deduplicates validDomains. Upload the complete ZIP, not the extracted manifest or the GitHub repository ZIP. Microsoft Teams client acceptance and tenant app policies still apply.
+
+## Outlook localhost certificate
+
+The local add-in loads `https://localhost:38473/outlook.html`. Development certificates must be explicitly trusted on each test Mac; native app signing does not supply HTTPS trust. Use **AI Settings → Show development certificate** to locate that installation's certificate. Before granting trust, verify that it matches the certificate served by Onboard and that its localhost name and dates are valid. An authorized local development trust can be restricted to SSL for localhost in the user's Keychain. This is a machine-specific approval, not something distributed inside the Teams ZIP. Restart the add-in or Outlook after the trust change. Certificate checks must remain enabled; a production rollout needs an approved certificate deployment and renewal process.
