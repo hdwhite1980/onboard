@@ -65,3 +65,11 @@ The organization should configure IDs, approved permissions, host URLs, certific
 Version 0.2.2 adds the required Teams parent domains, completes the SDK readiness handshake, and displays bounded initialization errors. Update the native app/service as well as the Teams package: the manifest ZIP does not contain the service or web page code.
 
 Microsoft states that Teams tabs do not support intranet sites using self-signed certificates. macOS trust established for the Outlook development certificate therefore does not prove Teams compatibility. Production requires a Teams-supported HTTPS deployment with an approved certificate. See [Teams tab prerequisites](https://learn.microsoft.com/en-us/microsoftteams/platform/tabs/how-to/tab-requirements). This update does not expose the local service publicly or disable certificate checks.
+
+## Outlook retrieval, local review and optional cloud analysis
+
+**Mail.Read** enables read-only retrieval of the selected message, its bounded thread, and an optional related-mail search when the user submits a request. Search uses the signed-in user’s mailbox in the detected Microsoft cloud; it does not grant additional access. [Microsoft documents message search through Graph](https://learn.microsoft.com/en-us/graph/search-query-parameter).
+
+The local model handles requests fitting the 2,048-token profile (1,536 input including instructions and 512 output). Larger results are reduced to complete excerpts for local review, with explicit coverage notes. When add-in cloud assistance is enabled in AI Settings and allowed for the request, locally cited sources can be sent to the configured provider for further analysis. The provider endpoint, account policy, input/output caps, daily request cap, and proxy rules still apply. Source text cannot select another provider or authorize actions. The add-in displays cloud input separately; a failure preserves the local result.
+
+This remains a public-content development implementation. Configuring a government provider does not enable a CUI/FCI production policy. Graph search results and local relevance selection are bounded and may omit relevant or contradictory evidence. Cloud availability requires an actual successful connection to the organization’s documented API endpoint; saving a key alone does not establish it.

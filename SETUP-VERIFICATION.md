@@ -94,3 +94,12 @@ Actual Outlook for Mac showed “Connecting to the application” indefinitely w
 After installing and restarting the service, reloading the actual Outlook add-in produced “Outlook is ready. Enter your local connection code to connect Onboard.” The native accessibility tree showed Connect enabled. This verifies the host initialization/button fix; a fresh Microsoft sign-in and pairing code are required after the restart, and no message was submitted to AI during verification.
 
 All 123 Python tests, 15 JavaScript initialization tests and four Rust build tests pass. Missing Office libraries, initialization timeout, wrong host and missing mailbox identity remain explicit failures. Pairing no longer requires a selected message, but including an opened item still checks item availability.
+
+## 2026-09-25 — Outlook context and local-to-cloud routing
+
+- 150 Python control tests, 15 JavaScript initialization/control tests, and four Rust policy tests passed; Swift app built and the staged/installed development signature verified.
+- Actual offline local generation on public installation documentation completed with 1,086 prompt tokens, a 2,048 total ceiling, and 512 output ceiling. Returned source quotes passed exact-span validation. No mailbox content was used. This is a single-request check, not sustained-load or full Outlook quality acceptance.
+- Removed only the fixed 5 GiB admission gate at owner direction. Existing live protected-reserve, pressure, swap, thermal, lifecycle and worker-footprint guards remain.
+- Added actual Graph related-message search, tokenizer-sized complete excerpts, local selection/citation checks, settings and per-request cloud controls, bounded cloud payload and daily quota, cancellation/account/session rechecks, and source-visible failure behavior. Boundary tests use clearly labeled test fixtures and do not represent live cloud or mailbox acceptance.
+- A real configured-provider check using public documentation returned HTTP 503, including after correcting full endpoint URL handling. No successful cloud answer or credential acceptance is claimed.
+- Distribution excludes settings, credentials, certificates, private prompts, mailbox data, local run evidence and model weights.

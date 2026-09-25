@@ -71,3 +71,9 @@ If sign-in stops with “Unexpected Microsoft sign-in address,” update from th
 ## Outlook Connect button
 
 The latest app corrects a blocked Microsoft Office.js dependency that left Outlook's Connect button disabled. The fix was verified in the actual Outlook for Mac add-in. Update the native app/service, reload the add-in, sign in again in Onboard Settings and generate a fresh Outlook pairing code. Initialization failures now display a reason and offer a retry button.
+
+## Outlook local review and cloud analysis update
+
+The local model now supports a bounded 2,048-token window (1,536 input including instructions, 512 output). Outlook can search related mail on request, then local AI selects source-backed evidence. Larger requests can use the configured cloud provider when add-in cloud assistance and per-request permission are enabled. The result shows partial coverage, route, and cloud input. Small/medium requests that fit stay local. Public-content development policy remains enforced. See [setup details](ACCESS-SETUP.md) and [update instructions](INSTALL.md).
+
+The fixed 5 GiB planning admission gate was removed at the owner’s direction; live pressure, swap, thermal, protected-reserve and process-memory guards remain. Source citations passed on an actual 1,086-input-token public-document run. Full mailbox relevance and cloud end-to-end acceptance remain to be verified in the configured environment.

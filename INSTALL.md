@@ -34,7 +34,7 @@ This is a **development source installer** for **Apple-silicon Macs running macO
    ```
 
 4. Keep the installation folder in place. The current development app depends on its runtime/model paths. Move neither the folder nor its contents after setup.
-5. Open **Onboard AI** from your user's Applications folder. Start the service under **AI Settings**, enable permitted public local processing, and try a short public question with internet lookup off. Local generation still enforces the retained memory and 512-token total-context limits.
+5. Open **Onboard AI** from your user's Applications folder. Start the service under **AI Settings**, enable permitted public local processing, and try a short public question with internet lookup off. Local generation still enforces the retained memory and 2,048-token total-context limit (up to 1,536 input and 512 output tokens).
 
 If macOS or organizational policy blocks the development app, follow the organization's approved development signing process. Do not disable Gatekeeper or certificate validation. A notarized distribution is separate work.
 
@@ -135,3 +135,13 @@ The September 25 sign-in correction accepts Microsoft's newer `https://login.mic
 Update the native app/service and reopen the Outlook add-in. A previous security policy blocked the exact `https://ajax.aspnetcdn.com/ajax/3.5/MicrosoftAjax.js` dependency loaded by Microsoft's Office.js SDK. The correction permits this file only for the Outlook page. Startup now times out with a visible explanation and a **Retry Outlook connection** button instead of leaving Connect disabled indefinitely. A mailbox identity is required for pairing; a selected message is required only when including that message in a request.
 
 After a service update, sign in to Microsoft again in Onboard Settings and generate a fresh Outlook pairing code. Codes expire after two minutes. You can right-click inside the Outlook add-in and choose **Reload** to fetch the updated page.
+
+## Outlook context limits and cloud analysis
+
+The local model now has a bounded 2,048-token profile: up to 1,536 input tokens (including instructions and sources), with 512 reserved for output. The fixed 5 GiB admission gate was removed at the owner’s direction; live memory-pressure, swap, thermal, protected-reserve and worker-memory guards still stop an unsafe run. This is not an unrestricted context-size setting.
+
+Outlook can search for related mail when you submit a question. Clear **Find related emails in my mailbox when I ask** to use only the opened item and explicitly listed sources. One Graph search retrieves at most 10 accessible candidates, in addition to the opened item and its bounded thread retrieval. The local model reviews a tokenizer-sized packet; coverage notes identify omissions. This is not a background scan or an exhaustive mailbox search.
+
+Small and medium requests that fit stay local. For larger packets, **AI Settings → Outlook and Teams connections → Allow cloud analysis of locally selected add-in content** enables a second stage with the configured GenAI provider. The add-in also shows a per-request cloud checkbox and destination. Only sources cited by the local model and checked against retrieved text can be sent. Up to five locally selected sources are eligible; the provider’s input limit can require excerpts or further omissions. The result exposes the cloud input and route. If local selection cannot be verified, no email is sent. Cloud errors retain the local result and explain the failure.
+
+All requests still use the public-content development policy. Microsoft mailbox access is not permission to send Internal, FCI, CUI or otherwise restricted content to a provider. Set the approved provider endpoint/model and key in Settings; a key for one service cannot be assumed valid for another. Compatible endpoints can be either an API base or a complete `/chat/completions` URL.
