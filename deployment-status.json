@@ -1,5 +1,5 @@
 {
-  "release": "0.6.0",
+  "release": "0.6.1",
   "nativeInstalled": true,
   "localServiceVerified": true,
   "modelReady": true,
@@ -9,7 +9,7 @@
   "genAIMilVerified": false,
   "governmentAuthorized": false,
   "tests": {
-    "python": 297,
+    "python": 306,
     "javascript": 75,
     "nodeServer": 9,
     "rust": 4,
@@ -20,7 +20,8 @@
     "Live Office workflow acceptance",
     "Customer endpoint and tenant selection",
     "GenAI.mil API contract and credentials",
-    "Government control profile and authorization"
+    "Government control profile and authorization",
+    "Register desktop callback and verify actual browser/CAC sign-in"
   ],
   "azureChecks": [
     {
@@ -165,5 +166,8 @@
     }
   ],
   "teamsCatalogPublishedVersion": "0.6.0",
-  "teamsClientAcceptance": false
+  "teamsClientAcceptance": false,
+  "addinRelease": "0.6.0",
+  "browserSignInImplemented": true,
+  "liveCACVerified": false
 }

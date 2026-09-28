@@ -16,9 +16,9 @@ See **AZURE-SETUP.md** in the release folder, or `product/integrated/teams-actio
 
 ## What the current build actually supports
 
-This build uses a separate Microsoft device-code sign-in in the native app and an account-matched approval in the native app to connect each add-in to the local AI service (no typed connection code required). It does **not** yet implement Teams or Outlook single sign-on (SSO).
+This build uses a separate Microsoft browser sign-in (authorization code with PKCE) in the native app and an account-matched approval in the native app to connect each add-in to the local AI service (no typed connection code required). It does **not** yet implement Teams or Outlook single sign-on (SSO).
 
-**AI Settings → Microsoft 365 → Environment → Automatic** now discovers the configured tenant's environment from Microsoft's HTTPS OpenID metadata before sign-in. Commercial, GCC, GCC High and DoD are supported routing choices. The **Detect tenant environment** button checks the entered tenant ID without signing in or reading organizational content. Save the tenant/client IDs and permissions before selecting **Sign in with Microsoft**; detection also runs automatically during that sign-in.
+**AI Settings → Microsoft 365 → Environment → Automatic** now discovers the configured tenant's environment from Microsoft's HTTPS OpenID metadata before sign-in. Commercial, GCC, GCC High and DoD are supported routing choices. The **Detect tenant environment** button checks the entered tenant ID without signing in or reading organizational content. Save the tenant/client IDs and permissions before selecting **Sign in in browser — CAC or credentials**; detection also runs automatically during that sign-in.
 
 | Detected environment | Sign-in authority | Graph endpoint |
 | --- | --- | --- |
@@ -26,7 +26,7 @@ This build uses a separate Microsoft device-code sign-in in the native app and a
 | GCC High | `login.microsoftonline.us` | `graph.microsoft.us` |
 | DoD | `login.microsoftonline.us` | `dod-graph.microsoft.us` |
 
-Endpoint mapping follows [Microsoft's national cloud deployments](https://learn.microsoft.com/en-us/graph/deployments). Government discovery is confirmed at the government authority before a device-code/token request. Discovery checks `msgraph_host`, region/subregion, tenant-specific issuer and token endpoint. Region/subregion interpretation also appears in [CISA's tenant environment checks](https://github.com/cisagov/ScubaGear/blob/main/PowerShell/ScubaGear/Modules/Providers/ExportPowerPlatformProvider.psm1). Unexpected or conflicting metadata stops sign-in; it never guesses from an email suffix or retries a blocked request through another cloud.
+Endpoint mapping follows [Microsoft's national cloud deployments](https://learn.microsoft.com/en-us/graph/deployments). Government discovery is confirmed at the government authority before an authorization or token request. Discovery checks `msgraph_host`, region/subregion, tenant-specific issuer and token endpoint. Region/subregion interpretation also appears in [CISA's tenant environment checks](https://github.com/cisagov/ScubaGear/blob/main/PowerShell/ScubaGear/Modules/Providers/ExportPowerPlatformProvider.psm1). Unexpected or conflicting metadata stops sign-in; it never guesses from an email suffix or retries a blocked request through another cloud.
 
 Automatic discovery initially sends the configured tenant ID to Microsoft's public metadata endpoint; it sends no credentials or organizational content. Organizations requiring government-only discovery can select GCC High or DoD explicitly; that selection is verified against government metadata. Explicit selections cannot override a conflicting response. Network/proxy failures stop the check and are displayed.
 
@@ -45,14 +45,14 @@ This flow matches Outlook's reported email or Teams' reported tenant/user ID aga
 
 Connections have no Onboard time-based expiry. Microsoft token expiry and organizational sign-in policies still apply. Disconnect, service restart, account/settings changes, or reloading an add-in require reconnecting and approving again. Tokens stay in memory. Abandoned approval requests are removed after ten minutes; click Connect to Onboard again if needed. This does not expire an established connection.
 
-**Advanced fallback:** both the add-in and AI Settings retain **Advanced: connect with a code**. A generated pairing code is one-use, has no time-based expiry, and is replaced by the next generated code. The Microsoft device sign-in code is different: it belongs only on Microsoft's sign-in page and is still needed for the current Microsoft login flow. Never share either code in support messages.
+**Advanced fallback:** both the add-in and AI Settings retain **Advanced: connect with a code**. A generated pairing code is one-use, has no time-based expiry, and is replaced by the next generated code. The optional Microsoft device sign-in code is different: it belongs only on Microsoft's sign-in page and is used only if you explicitly select the device-code fallback. Never share either code in support messages.
 
 ## Administrator setup for the current development build
 
 1. In the organization's correct Entra tenant (commercial or government), open **App registrations → New registration**. Register Onboard for accounts in that organizational directory only. Record the **Directory (tenant) ID** and **Application (client) ID**. These IDs are configuration, not passwords.
-2. Under **Authentication → Advanced settings**, enable **Allow public client flows** only if the organization authorizes device-code sign-in for this development app. This flow has no redirect callback and uses no client secret. If organizational policy blocks device code, an approved supported sign-in adapter is required; do not weaken that policy. See [Microsoft's device-code flow](https://learn.microsoft.com/en-us/entra/identity-platform/v2-oauth2-device-code).
+2. Under **Authentication → Add a platform → Mobile and desktop applications**, add **`http://localhost/onboard-signin`**. This is the native browser callback, not a Web or SPA platform redirect. Onboard binds a temporary IPv4 loopback-only port before opening the browser; Microsoft ignores the port when matching localhost redirect URIs. No client secret or implicit grant is used. Retain existing approved redirects. **Allow public client flows** is needed only for the optional device-code fallback if your organization permits it. Do not weaken Conditional Access to enable a fallback. See [Microsoft redirect guidance](https://learn.microsoft.com/en-us/entra/identity-platform/reply-url).
 3. Under **API permissions → Add a permission → Microsoft Graph → Delegated permissions**, add only the features being tested from the table below. Do not choose Application permissions for this user-scoped design. Have an authorized administrator approve consent where Microsoft or the tenant's consent policy requires it.
-4. In **Onboard → AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, enter the two IDs, enable the same read capabilities and **Save settings**. Select **Sign in with Microsoft** and complete Microsoft's sign-in with the same account used in Outlook/Teams. MFA and Conditional Access still apply.
+4. In **Onboard → AI Settings → Microsoft 365**, leave **Environment** on **Automatic**, enter the two IDs, enable the same read capabilities and **Save settings**. Select **Sign in in browser — CAC or credentials** and complete Microsoft's sign-in with the same account used in Outlook/Teams. MFA and Conditional Access still apply.
 5. Start the local service, establish the approved HTTPS setup, deploy the appropriate add-in through the organization's supported route, and connect/approve it as described above. The current policy permits only genuinely public content approved for local processing; existing mailbox access does not change that processing restriction.
 
 | Onboard option | Delegated Graph permissions requested by this build |
@@ -67,6 +67,20 @@ Connections have no Onboard time-based expiry. Microsoft token expiry and organi
 | Send reviewed Teams messages (optional) | `Chat.Create`, `ChatMessage.Send`, `User.ReadBasic.All` |
 
 This table describes the code's requests, not a guarantee that every resource/API is available in every government cloud or to every user. `Files.Read` does not grant broad access to every shared enterprise document. Transcripts must exist and be accessible through the supported meeting API. Teams and transcript permissions may require administrator consent. Sending is off by default. Optional reviewed-message settings request delegated Mail.Send for email, or Chat.Create, ChatMessage.Send and User.ReadBasic.All for Teams. No application permissions or Mail.ReadWrite are requested. Draft output is never sent automatically.
+
+## Browser / CAC sign-in — native release 0.6.1
+
+Choose your installed browser under **AI Settings → Internet access → Browser**, then **Save settings**. Microsoft sign-in uses that saved selection even when Internet search is disabled. Select **Sign in in browser — CAC or credentials** under Microsoft 365. In the Microsoft/organization page, use certificate/smart-card sign-in when offered, select your CAC certificate and enter its PIN in the browser/OS prompt. Onboard receives an authorization code and exchanges it using PKCE; it never receives the password, CAC PIN or private key. Authentication and API tokens remain in memory and are cleared on disconnect/restart. Expired tokens require sign-in again; there is no silent refresh or attempt to bypass tenant sign-in frequency.
+
+A configured CAC reader, trusted card/certificate chain, browser support and the organization's certificate authentication/federation policy are prerequisites. This flow allows CAC; it cannot require or provision CAC by itself, and is not a device-compliance broker. The tenant determines permitted authentication methods. See [Microsoft's Apple certificate-authentication support](https://learn.microsoft.com/en-us/entra/identity/authentication/concept-certificate-based-authentication-mobile-ios).
+
+The local callback is one-use, checks random state, uses S256 PKCE, times out after ten minutes, records no callback query logs, and closes after completion/cancellation. The temporary HTTP listener is only on loopback; it does not replace or weaken the HTTPS add-in bridge. Browser launch errors stop sign-in; Onboard never silently chooses another browser. The device-code alternative is available only by explicit selection. Live CAC acceptance still requires the actual card, configured tenant and browser.
+
+For `AADSTS50011`, verify the exact desktop redirect above in the **same Entra application/client ID used by Onboard**, not the Teams Actions bot registration. Government customers must configure their own approved registration in the government directory.
+
+## GenAI.mil daily access renewal
+
+No publicly documented GenAI.mil daily-unlock API was identified during the September 28, 2026 implementation. A model instruction such as “unlock access” cannot renew credentials or change an access policy. No automatic unlock is implemented. If your organization supplies an approved documented refresh/re-authorization API, it can receive its own adapter; otherwise complete the required user sign-in in the GenAI portal and retry. An arbitrary HTTP 401/403/503 is not proof of the reported daily lock. Microsoft 365 CAC sign-in and the cloud AI provider's authorization are separate.
 
 ## Intended sign-in experience
 

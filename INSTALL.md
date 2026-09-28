@@ -1,4 +1,4 @@
-> Current release: 0.6.0. See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
+> Current native/service release: 0.6.1 (add-ins 0.6.0). See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
 
 # Install Onboard AI on another Mac
 
@@ -184,3 +184,5 @@ Use the repository-root Teams **0.4.2** package for the Azure commercial test, a
 ## Hybrid tasks and Word (0.5)
 
 After updating, quit and reopen Onboard to load the new task controls. Hybrid tools are off until enabled in AI Settings, with specific approved work folders and website hosts. Existing provider credentials and model/runtime assets are retained. See [HYBRID-WORD.md](HYBRID-WORD.md) for configuration, Word manifest installation, label handling and attaching created DOCX files in Outlook. A new Word add-in must be sideloaded or deployed by the tenant administrator; updating the desktop app does not add it to Word automatically.
+
+Browser/CAC sign-in: add the native desktop redirect `http://localhost/onboard-signin` to your approved Entra registration. Choose and save the browser in AI Settings, then sign in from Microsoft 365 settings. See ACCESS-SETUP.md for CAC prerequisites and optional device-code fallback.
