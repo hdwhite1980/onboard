@@ -43,21 +43,21 @@
  get('handoff-review').addEventListener('change',()=>{get('handoff-open').disabled=busy||!selected||!get('handoff-review').checked;});
  get('handoff-open').addEventListener('click',async()=>{
   if(busy||!selected||!get('handoff-review').checked)return;setBusy(true);get('handoff-open').disabled=true;
+  let claim='',opened=false;
   const row=selected,epoch=version,recipient=get('handoff-incoming-recipient').value.trim(),subject=get('handoff-incoming-subject').value,body=get('handoff-incoming-body').value;
   try{
    await verifyHostAccount();
    if(!/^[^\s@,;]+@[^\s@,;]+\.[^\s@,;]+$/.test(recipient))throw Error('Enter the intended recipient’s complete address.');
    if(!body.trim()||body.length>12000)throw Error('Review a draft of up to 12,000 characters.');
    if(application==='outlook'&&(!subject.trim()||subject.length>200||/[\r\n\x00]/.test(subject)))throw Error('Enter a one-line email subject of up to 200 characters.');
-   if(!consumed){await api('handoff-remove',{id:row.id});if(epoch!==version)return;consumed=true;}
-   else await api('handoff-list',{});
-   if(epoch!==version)return;
+   const reserved=await api('handoff-claim',{id:row.id});claim=reserved.claim;if(epoch!==version)return;
    // Recheck host identity after the local service validates the paired account.
    await verifyHostAccount();if(epoch!==version)return;
    const message=application==='outlook'?await OnboardOutlook.newDraft(recipient,subject,body):await OnboardTeams.useDraft(recipient,body);
+   opened=true;consumed=true;await api('handoff-finish',{id:row.id,claim,opened:true});claim='';
    if(epoch!==version)return;selected=null;clearReview();note(message+' The local transfer has been removed from the queue.');
-  }catch(e){if(epoch===version)note(e.message+(consumed?' The text remains here; retry opening it or copy it manually.':''));}
-  finally{setBusy(false);get('handoff-open').disabled=!selected||!get('handoff-review').checked;}
+  }catch(e){if(epoch===version)note(e.message+(opened?' The destination accepted this draft. Check it there before opening another copy.':' The draft is preserved. Check the destination app before retrying.'));}
+  finally{if(claim&&!opened)try{await api('handoff-finish',{id:row.id,claim,opened:false});}catch(_){} setBusy(false);get('handoff-open').disabled=!selected||!get('handoff-review').checked;}
  });
  get('handoff-discard').addEventListener('click',async()=>{
   if(busy||!selected)return;busy=true;

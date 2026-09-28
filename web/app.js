@@ -92,6 +92,7 @@ async function selectedSources(){
  return sources;
 }
 function render(result){
+ globalThis.OnboardWorkspace?.result(result,activeJob,()=>el("answer").value);
  globalThis.OnboardActions?.result(result);
  globalThis.OnboardMessages?.result(result,activeJob);globalThis.OnboardHandoffs?.result(result,activeJob);
  draftReady=result.status==='generated';draftItem=openedItem;updateDraftButton();
@@ -104,11 +105,11 @@ function render(result){
   const quotes=[...new Set((result.claims||[]).filter(c=>c.source_id===s.id).map(c=>c.quote))];
   if(quotes.length){const evidence=document.createElement('pre');evidence.textContent='Referenced excerpts:\n'+quotes.join('\n\n');details.append(evidence);}
   const original=document.createElement('details');const label=document.createElement('summary');label.textContent='Full retrieved text';original.append(label);
-  const p=document.createElement('pre');p.textContent=s.text;original.append(p);details.append(original);
+  const p=document.createElement('pre');p.textContent=s.text||"Original source content is not retained in saved work.";original.append(p);details.append(original);
   if(s.url){try{const u=new URL(s.url);if(u.protocol==='https:'&&!u.username&&!u.password){const a=document.createElement('a');a.textContent='Open original source';a.href=u.href;a.target='_blank';a.rel='noopener noreferrer';details.append(a);}}catch(_){}}
   el('sources').append(details);
  }
- for(const s of result.cloud_sources||[]){const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Cloud analysis input · '+s.title;details.append(summary);const p=document.createElement('pre');p.textContent=s.text;details.append(p);el('sources').append(details);}
+ for(const s of result.cloud_sources||[]){const details=document.createElement('details');const summary=document.createElement('summary');summary.textContent='Cloud analysis input · '+s.title;details.append(summary);const p=document.createElement('pre');p.textContent=s.text||"Original source content is not retained in saved work.";details.append(p);el('sources').append(details);}
  text('notes',[...(result.retrieval_notes||[]),result.unknowns?'Missing information: '+result.unknowns:'',result.validation||''].join('\n'));
 }
 el('task').addEventListener('change',()=>{if(el('search-mail')&&['reply','rewrite','shorten','tone'].includes(el('task').value))el('search-mail').checked=false;resetDraft();});
@@ -126,7 +127,7 @@ el('submit').addEventListener('click',async()=>{
 });
 el('cancel').addEventListener('click',async()=>{generation++;globalThis.OnboardMessages?.reset();resetDraft();try{if(activeJob)await api('cancel',{id:activeJob});text('status','Request cancelled.');}catch(e){text('status',e.message);}activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;});
 window.addEventListener('pagehide',()=>{globalThis.OnboardHandoffs?.disconnect();token='';generation++;connectionAttempt++;});
-function resetDraft(){globalThis.OnboardActions?.reset();globalThis.OnboardHandoffs?.reset();draftReady=false;draftItem=null;if(el('native-review'))el('native-review').checked=false;updateDraftButton();}
+function resetDraft(){globalThis.OnboardWorkspace?.reset();globalThis.OnboardActions?.reset();globalThis.OnboardHandoffs?.reset();draftReady=false;draftItem=null;if(el('native-review'))el('native-review').checked=false;updateDraftButton();}
 function updateDraftButton(){if(el('native-draft'))el('native-draft').disabled=!draftReady||!el('native-review')?.checked;}
 function itemChanged(){globalThis.OnboardDocuments?.reset();
  const old=activeJob;generation++;activeJob='';openedItem=null;resetDraft();globalThis.OnboardMessages?.reset();
@@ -185,3 +186,6 @@ document.querySelectorAll('[data-task]').forEach(button=>button.addEventListener
 }));
 el('task').addEventListener('change',updateQuickActions);updateQuickActions();
 document.querySelector('.settings-link')?.addEventListener('click',()=>{el('connection-panel').open=true;});
+
+// Restored drafts are not implicitly bound to the currently open email.
+globalThis.OnboardWorkspace?.configure({api,restore(row){generation++;resetDraft();openedItem=null;activeJob=row.job;render(row.result);draftReady=false;draftItem=null;updateDraftButton();text('status',row.result.message+' Use the transfer controls to choose a recipient, or create a Word file.');}});
