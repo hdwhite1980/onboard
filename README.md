@@ -2,16 +2,16 @@
 
 Onboard connects Outlook, Teams and Word to the installed local AI service, with optional configured cloud analysis. This is a macOS development prototype for public-content testing.
 
-## Current release — September 28, 2026 · native 0.6.2 / add-ins 0.6.0
+## Current release — September 28, 2026 · native 0.6.3 / add-ins 0.6.0
 
-- Native 0.6.2 fixes the Swift settings-expression compiler timeout during setup. Download the latest ZIP and rerun Setup.command; keep the existing model/runtime installation.
+- Native 0.6.3 adds experimental TurboQuant K8/V4 cache compression, cloud assistance after clean local resource stops, and admission with stable existing swap. See [TURBOQUANT.md](TURBOQUANT.md) for settings and measured limits. Existing model weights are reused.
 - Microsoft browser sign-in uses your saved browser and PKCE. CAC/certificate sign-in is available when configured by your tenant; register `http://localhost/onboard-signin` as a desktop redirect. See ACCESS-SETUP.md.
 - Encrypted **Saved work** shares explicitly reviewed PUBLIC drafts across the desktop, Outlook, Teams and Word, including after restart and sign-in. Seven-day expiry; no automatic source-content cache.
 - Failed native draft openings preserve the transfer for recovery.
 - Optional administrator-owned endpoint restrictions and authenticated connection diagnostics are included.
 - Teams **0.6.0** uses the Azure Web App and includes personal/chat/channel tabs plus selected-message and compose actions.
 - Outlook **0.6.0.0** uses the local service and native Office item/composer integration.
-- Native **0.6.2** adds cloud planning with reviewed local tools; Word **0.6.0.0** adds document inspection, drafting and feedback workflows.
+- Native **0.6.3** adds cloud planning with reviewed local tools; Word **0.6.0.0** adds document inspection, drafting and feedback workflows.
 - Outlook can create DOCX documentation from selected/matching/recent mail and attach reviewed files in a compose window.
 - Purview metadata is inspected where available; unknown, unmapped or encryption-bearing labels block processing.
 - Redesigned card interface: Outlook blue, Teams purple, quick actions and expandable connection/source controls.
@@ -58,7 +58,7 @@ Connect through **Connection → Connect to Onboard**, then approve in the nativ
 
 ## Validation and limitations
 
-See deployment-status.json for the current hosted deployment checks. Offline server tests cover health, authentication rejection and private-file isolation. The 306 Python tests, 75 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt and installed with a verified ad hoc signature. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
+See deployment-status.json for the current hosted deployment checks. Offline server tests cover health, authentication rejection and private-file isolation. The 316 Python tests, 75 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt with a verified ad hoc signature. Installation and running-service versions are listed separately in deployment-status.json. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
 
 Live Word insertion/attachment and Purview policy acceptance, authenticated Teams actions, a new end-to-end Outlook/Teams-to-local-AI session, second-machine acceptance, GenAI.mil integration and government authorization are not established by these deployment checks. No real messages were sent during this release update.
 

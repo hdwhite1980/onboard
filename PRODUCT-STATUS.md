@@ -1,9 +1,11 @@
 # Onboard AI — product priorities and release status
 
-Authoritative integrated-product status · September 28, 2026 · native/service release 0.6.2; add-ins 0.6.0.
+Authoritative integrated-product status · September 28, 2026 · native/service release 0.6.3; add-ins 0.6.0.
 Historical Sprint 0–3 research and earlier READMEs describe their dates, not current release authority or live acceptance. This document distinguishes shipped code, deployment, and customer verification.
 
-Native 0.6.2 is a build compatibility correction: settings groups are explicitly typed to prevent the Swift expression type-check timeout reported during setup on another Mac. Development-Mac build passes; rerun on the affected Mac remains required.
+Native 0.6.3 adds optional TurboQuant cache compression, bounded cloud assistance after clean local resource failures, and admission with stable existing swap. See [compression and offloading details](TURBOQUANT.md). All remain public-content development features.
+
+Native 0.6.2 was a build compatibility correction: settings groups are explicitly typed to prevent the Swift expression type-check timeout reported during setup on another Mac. Development-Mac build passes; rerun on the affected Mac remains required.
 
 ## Intended product
 
@@ -15,7 +17,7 @@ Application-first assistance in Outlook, Teams and Word; one local Onboard servi
 |---|---|---|
 | P0 | Preserve reviewed work across applications and restarts | 0.6 adds explicit encrypted Saved work in native, Outlook, Teams and Word. Account/cloud separation, seven-day expiry, deletion, source references and review reset are implemented. Original source bodies and active tool execution are not persisted. |
 | P0 | Prevent losing drafts when destination apps fail | Two-phase local handoff reserves a draft and removes it only after the host reports success. Host failure preserves text. An ambiguous interrupted opening requires checking the destination; it is never automatically resent. |
-| P0 | Consistent connection/capability status | Authenticated add-in diagnostics distinguish a running service, signed-in account, qualified model, configured provider and unverified live acceptance. Local service uses 0.6.2; unchanged add-in manifests remain 0.6.0. |
+| P0 | Consistent connection/capability status | Authenticated add-in diagnostics distinguish a running service, signed-in account, qualified model, configured provider and unverified live acceptance. Local service uses 0.6.3; unchanged add-in manifests remain 0.6.0. |
 | P0 | Current, truthful documentation | This file is authoritative. Historical baseline and earlier directions are marked accordingly. No mock or unit test is reported as live tenant validation. |
 | P1 | Administrator-controlled restrictions | Optional root-owned endpoint policy restricts tenant/provider selection, public label mappings, cloud, hybrid tasks and saved work. This is an MDM-deployable restriction file, not the complete signed central management plane. |
 | P1 | Complete real workflow acceptance | Prepared test procedure below. Actual Outlook→Word→Outlook and Teams handoffs, protected tenant labels, second-machine deployment and GenAI.mil are pending live acceptance. |

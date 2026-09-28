@@ -246,3 +246,7 @@ All three add-ins include **Saved work**. Review a generated draft, enter a titl
 Use **Saved work → Connection and capability status → Check this connection** to see what is ready, configured or still unverified. A configured provider is not described as connected without a real test. See [PRODUCT-STATUS.md](PRODUCT-STATUS.md) and [MANAGED-POLICY.md](MANAGED-POLICY.md).
 
 The native app and add-in packages are versioned 0.6. Updating the local application does not automatically update a tenant catalog or Azure hosting. Use matching release assets; real tenant acceptance remains required.
+
+## Memory pressure and cloud assistance (0.6.3)
+
+See [TURBOQUANT.md](TURBOQUANT.md) for the experimental local cache setting and permitted cloud handoff when local inference stops. Save settings after selecting a cache mode. Enable cloud processing, add-in cloud assistance, and the request-level cloud option to permit off-device analysis. No Entra permission changes are required for this release.
