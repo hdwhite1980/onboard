@@ -1,3 +1,5 @@
+> Current release: 0.6.0. See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
+
 # Install Onboard AI on another Mac
 
 This is a **development source installer** for **Apple-silicon Macs running macOS 26 or later**. It is not a signed/notarized customer installer. Windows and Intel Mac host installers are not available.

@@ -224,3 +224,11 @@ These workflows are explicitly enabled: ordinary Ask AI keeps its existing routi
 No additional Graph permission is required for local DOCX generation or native Outlook attachment. Mailbox collection uses delegated `Mail.Read`; document/Teams source reads use their existing configured scopes. Onboard does not request `Mail.ReadWrite` to implement a native attachment. The current label inspection reads exposed metadata; it does not request a Purview catalog scope or grant MIP decryption rights.
 
 The Word pane connects through explicit native approval to the Onboard account shown to the user. Word SSO identity verification is not implemented. Files generated in Word can be attached from the Outlook document tray; feedback text goes through the local draft inbox. The user reviews and sends in Outlook. Only organization-approved PUBLIC labels may be mapped in the development policy; encrypted/unknown labels remain blocked. A customer rollout still needs authorized tenant policy and live acceptance.
+
+## Release 0.6 — saved work, recovery and administrator restrictions
+
+All three add-ins include **Saved work**. Review a generated draft, enter a title, confirm permitted PUBLIC retention and save it. Reconnect the same Microsoft account after restart to reopen it. No new Graph permissions are required. Saved work can also be opened from the native app. There is no automatic content retention or cloud synchronization.
+
+Use **Saved work → Connection and capability status → Check this connection** to see what is ready, configured or still unverified. A configured provider is not described as connected without a real test. See [PRODUCT-STATUS.md](PRODUCT-STATUS.md) and [MANAGED-POLICY.md](MANAGED-POLICY.md).
+
+The native app and add-in packages are versioned 0.6. Updating the local application does not automatically update a tenant catalog or Azure hosting. Use matching release assets; real tenant acceptance remains required.

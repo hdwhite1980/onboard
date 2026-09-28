@@ -13,9 +13,9 @@ test -f "$onboard_zip"
 python3 - "$onboard_zip" <<'PY'
 import hashlib, pathlib, sys
 p = pathlib.Path(sys.argv[1])
-expected = '07b6079de0710aed5900b8c22c9c72615fb1ec4b8422f0d2f1c4d3b86630d987'
+expected = '494771213f643a035c3825a73224c51987f31989b6f4a869bac0ba23cc7d9844'
 if hashlib.sha256(p.read_bytes()).hexdigest() != expected:
-    raise SystemExit('ZIP differs from the verified September 27 deployment package. Nothing deployed.')
+    raise SystemExit('ZIP differs from the verified 0.6 deployment package. Nothing deployed.')
 print('Deployment package verified.')
 PY
 az account set --subscription "$onboard_sub"

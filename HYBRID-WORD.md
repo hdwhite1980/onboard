@@ -1,3 +1,5 @@
+> Release 0.6 adds encrypted Saved work and safer draft handoffs. See [PRODUCT-STATUS.md](PRODUCT-STATUS.md) for the authoritative current status; the 0.5 workflow details below remain applicable except where updated there.
+
 # Hybrid tasks, Word and Purview metadata — development release 0.5
 
 This build adds cloud planning with local tools, a Word task pane, and email-to-Word-document workflows. It uses actual selected files and Microsoft data when configured. Tests use isolated fixtures; they are not evidence of a working customer tenant or GenAI.mil connection.

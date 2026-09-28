@@ -2,15 +2,18 @@
 
 Onboard connects Outlook, Teams and Word to the installed local AI service, with optional configured cloud analysis. This is a macOS development prototype for public-content testing.
 
-## Current release — September 28, 2026 · native/Word 0.5
+## Current release — September 28, 2026 · 0.6
 
-- Teams **0.4.2** uses the Azure Web App and includes personal/chat/channel tabs plus selected-message and compose actions.
-- Outlook **0.5.0.0** uses the local service and native Office item/composer integration.
-- Native **0.5.0** adds cloud planning with reviewed local tools; Word **0.5.0.0** adds document inspection, drafting and feedback workflows.
+- Encrypted **Saved work** shares explicitly reviewed PUBLIC drafts across the desktop, Outlook, Teams and Word, including after restart and sign-in. Seven-day expiry; no automatic source-content cache.
+- Failed native draft openings preserve the transfer for recovery.
+- Optional administrator-owned endpoint restrictions and authenticated connection diagnostics are included.
+- Teams **0.6.0** uses the Azure Web App and includes personal/chat/channel tabs plus selected-message and compose actions.
+- Outlook **0.6.0.0** uses the local service and native Office item/composer integration.
+- Native **0.6.0** adds cloud planning with reviewed local tools; Word **0.6.0.0** adds document inspection, drafting and feedback workflows.
 - Outlook can create DOCX documentation from selected/matching/recent mail and attach reviewed files in a compose window.
 - Purview metadata is inspected where available; unknown, unmapped or encryption-bearing labels block processing.
 - Redesigned card interface: Outlook blue, Teams purple, quick actions and expandable connection/source controls.
-- Azure interface deployment and Teams desktop 0.4.2 page loading are verified. Authenticated message actions, local connection and complete drafting/sending acceptance remain separate checks.
+- Azure interface deployment is tracked in deployment-status.json. The 0.6.0 Teams catalog/client update requires verification. Authenticated message actions, local connection and complete drafting/sending acceptance remain separate checks.
 - Netlify is not used. Commercial Azure testing does not establish government deployment approval.
 
 ## Install or update the Mac app
@@ -28,11 +31,11 @@ See [INSTALL.md](INSTALL.md). Requires Apple silicon and macOS 26+. The script i
 
 | File | Purpose |
 | --- | --- |
-| [Onboard-Teams.zip](Onboard-Teams.zip) | Current Azure Teams 0.4.2 package; upload intact to the existing catalog app. |
-| [Onboard-Teams-Actions.zip](Onboard-Teams-Actions.zip) | Identical explicit-name copy of the Teams 0.4.2 package. |
+| [Onboard-Teams.zip](Onboard-Teams.zip) | Current Azure Teams 0.6.0 package; upload intact to the existing catalog app. |
+| [Onboard-Teams-Actions.zip](Onboard-Teams-Actions.zip) | Identical explicit-name copy of the Teams 0.6.0 package. |
 | [word.xml](word.xml), [word-hosted.xml](word-hosted.xml) | New Word task-pane manifests for local or commercial Azure hosting. |
 | [HYBRID-WORD.md](HYBRID-WORD.md) | Hybrid setup, Word installation, document/attachment workflows and label limitations. |
-| [outlook.xml](outlook.xml) | Outlook 0.5.0.0 local-service manifest. |
+| [outlook.xml](outlook.xml) | Outlook 0.6.0.0 local-service manifest. |
 | [Onboard-Azure-WebApp.zip](Onboard-Azure-WebApp.zip) | Deployed Node handler and public interfaces with pinned production dependencies. |
 | [Onboard-Web-Assets.zip](Onboard-Web-Assets.zip), [web/](web/) | Matching hosted interface files. |
 | [Onboard-Source.zip](Onboard-Source.zip) | Full current application, local AI, add-in and handler source, dependency notices and retained runtime verification inputs. |
@@ -47,14 +50,16 @@ Read [ACCESS-SETUP.md](ACCESS-SETUP.md) for Entra/Graph permissions, native conn
 
 Teams: **Apps → Built for your org → Onboard AI**, then choose a chat/channel. Use the message's **More actions** menu or compose-box **Actions and apps** for Onboard actions. A personal tab has no current conversation. This handler does not implement free-form @mention bot replies.
 
-If an old personal installation still opens Netlify, remove that Onboard personal app and re-add the current organization catalog version. Check **About → 0.4.2**. Installing the native Mac app alone does not update the Teams catalog.
+If an old personal installation still opens Netlify, remove that Onboard personal app and re-add the current organization catalog version. Check **About → 0.6.0**. Installing the native Mac app alone does not update the Teams catalog.
 
 Connect through **Connection → Connect to Onboard**, then approve in the native app using the same Microsoft account. The configured hosted origin and localhost certificate must be approved. Codes remain an advanced fallback; host SSO is not implemented. Generated messages remain drafts until reviewed and sent by the user.
 
 ## Validation and limitations
 
-The Azure pages match the deployed release bytes. Health succeeds, unauthenticated bot requests are rejected, and private files are not served. The 276 Python tests, 69 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt and installed with a verified ad hoc signature. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
+See deployment-status.json for the current hosted deployment checks. Offline server tests cover health, authentication rejection and private-file isolation. The 297 Python tests, 75 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt and installed with a verified ad hoc signature. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
 
 Live Word insertion/attachment and Purview policy acceptance, authenticated Teams actions, a new end-to-end Outlook/Teams-to-local-AI session, second-machine acceptance, GenAI.mil integration and government authorization are not established by these deployment checks. No real messages were sent during this release update.
+
+For priorities and the exact completed/pending boundary, start with [PRODUCT-STATUS.md](PRODUCT-STATUS.md). Administrator restrictions are described in [MANAGED-POLICY.md](MANAGED-POLICY.md). Run `python3 verify_release.py` to verify the downloaded release without installing it.
 
 For the new workflows, start with [HYBRID-WORD.md](HYBRID-WORD.md). Hybrid tasks are disabled until configured in AI Settings. Updating the Mac app does not automatically install Word in the Office tenant. GenAI capability remains an implementation assumption pending actual endpoint validation.
