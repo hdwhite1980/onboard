@@ -11,5 +11,7 @@
   "liveAuthenticatedMessageActionsVerified": false,
   "localBridgeRequiresCertificateAndNativeApproval": true,
   "governmentTenantVerified": false,
-  "netlifyRequired": false
+  "netlifyRequired": false,
+  "teamsRedesignedUIObserved": true,
+  "localServiceRestarted": true
 }

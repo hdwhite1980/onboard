@@ -164,3 +164,7 @@ Combined validation: 235 Python tests, 54 JavaScript tests, and four Rust tests 
 ## Runtime diagnostic update — September 25, 2026
 
 243 Python tests and 4 Rust tests passed. Three actual local model requests completed: a short reply, a longer response, and summarization of the published installation guide (1,182 input tokens, 26.8 seconds). The user-reported summary failure was not reproduced. These checks do not prove that request is fixed. Specific guard errors and a private content-free latest-run diagnostic now support identifying a recurrence. No mailbox content was used in these checks; no cloud request or message was sent.
+
+## September 28, 2026 release synchronization
+
+Azure Kudu reported deployment successful for the refreshed web package. Live HTTPS checks confirmed exact HTML/JavaScript/CSS hashes, health 200, unauthenticated actions 401, and private paths 404. The stale Teams personal installation was replaced; About showed 0.4.2 and the redesigned purple UI rendered inside Teams. The native app was rebuilt, its ad hoc signature verified, installed, and the local service stopped/started successfully. Sixty interface tests, seven Python Teams/package tests, nine Node handler/server tests and four Rust policy tests passed. Older test DOM fixtures were updated to support selectors and multiple listeners. Full authenticated message-action and government acceptance remain pending; no real messages were sent.
