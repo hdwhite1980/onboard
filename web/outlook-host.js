@@ -34,6 +34,7 @@
  async function value(field){return typeof field==='string'?field:field?.getAsync?await call(cb=>field.getAsync(cb),'Cannot read the Outlook field.') : field?.toISOString?field.toISOString():'';}
  async function readItem(){
   const item=current();check(item);
+  const sensitivity=root.OnboardLabels?await root.OnboardLabels.outlook(item):null;check(item);
   const subject=await value(item.subject);
   const body=await call(cb=>item.body.getAsync(root.Office.CoercionType.Text,cb),'Cannot read the opened Outlook item.');check(item);
   const isMeeting=item.itemType===root.Office.MailboxEnums.ItemType.Appointment;
@@ -43,7 +44,7 @@
    content='Meeting: '+subject+'\nStart: '+start+'\nEnd: '+end+'\nLocation: '+location+'\n'+body;
   }
   if(content.length>65536)throw Error('This item is too large to read completely. Select a smaller excerpt or explicitly add a Graph source.');
-  return {item,source:{kind:'selected',text:content,title:subject||'Opened Outlook item',origin:isMeeting?'outlook-meeting':'outlook-mail'},title:subject||'Opened Outlook item'};
+  return {item,source:{kind:'selected',text:content,title:subject||'Opened Outlook item',origin:isMeeting?'outlook-meeting':'outlook-mail',sensitivity},title:subject||'Opened Outlook item'};
  }
  async function useDraft(item,draft){
   check(item);
@@ -75,5 +76,12 @@
   return 'New email draft opened in Outlook. Review and send in Outlook.';
  }
  function onItemChanged(handler){const mailbox=root.Office?.context?.mailbox;if(mailbox?.addHandlerAsync&&root.Office.EventType?.ItemChanged)mailbox.addHandlerAsync(root.Office.EventType.ItemChanged,handler);}
- root.OnboardOutlook={initialize,readItem,useDraft,newDraft,current,onItemChanged,account:()=>root.Office?.context?.mailbox?.userProfile?.emailAddress?.toLowerCase()};
+ async function attachDocument(item,file){
+  check(item);
+  if(!item.subject?.setAsync||!item.addFileAttachmentFromBase64Async)throw Error('This requires an Outlook compose window with attachment API support. Download and attach the reviewed file manually on unsupported clients.');
+  if(typeof file?.base64!=='string'||file.base64.length>1000000||!file.name?.endsWith('.docx'))throw Error('Invalid reviewed Word attachment.');
+  await call(cb=>item.addFileAttachmentFromBase64Async(file.base64,file.name,cb),'Outlook could not attach the document.');check(item);
+  return 'Word document attached to this email. Review the recipients, message and attachment, then click Send in Outlook.';
+ }
+ root.OnboardOutlook={initialize,readItem,useDraft,newDraft,attachDocument,current,onItemChanged,account:()=>root.Office?.context?.mailbox?.userProfile?.emailAddress?.toLowerCase()};
 })(globalThis);

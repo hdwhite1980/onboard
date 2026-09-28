@@ -128,7 +128,7 @@ el('cancel').addEventListener('click',async()=>{generation++;globalThis.OnboardM
 window.addEventListener('pagehide',()=>{globalThis.OnboardHandoffs?.disconnect();token='';generation++;connectionAttempt++;});
 function resetDraft(){globalThis.OnboardActions?.reset();globalThis.OnboardHandoffs?.reset();draftReady=false;draftItem=null;if(el('native-review'))el('native-review').checked=false;updateDraftButton();}
 function updateDraftButton(){if(el('native-draft'))el('native-draft').disabled=!draftReady||!el('native-review')?.checked;}
-function itemChanged(){
+function itemChanged(){globalThis.OnboardDocuments?.reset();
  const old=activeJob;generation++;activeJob='';openedItem=null;resetDraft();globalThis.OnboardMessages?.reset();
  el('answer').value='';el('sources').replaceChildren();text('notes','');el('submit').disabled=!token;el('cancel').disabled=true;
  text('context',application==='outlook'?'Outlook context changed. Your next request will use the item now open.':'Teams selection changed. Ask again for the selected context.');text('status','Previous result cleared.');
