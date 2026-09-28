@@ -18,7 +18,7 @@ async function init(){
   if(application==='outlook'){
    context=await OnboardOutlook.initialize();outlookAccount=context.userProfile.emailAddress?.toLowerCase()||'';hostReady=true;OnboardOutlook.onItemChanged?.(itemChanged);text('context','Outlook is ready. Choose Connect to Onboard, then approve in the Onboard app.');
   }else{
-   context=await OnboardTeams.initialize();hostReady=true;text('context','Teams is ready. Choose a message from this conversation; Graph supplies its text when needed.');
+   context=await OnboardTeams.initialize();globalThis.OnboardActions?.initialize(context);hostReady=true;text('context',globalThis.OnboardActions?.active()?'Teams message action is ready. Review the selected text and connect to Onboard.':'Teams is ready. Choose a message from this conversation; Graph supplies its text when needed.');
   }
  }catch(error){hostReady=false;const message=(application==='teams' ? 'Teams':'Outlook')+' connection failed: '+error.message;text('context',message);text('status',message);}
  el('pair').disabled=!hostReady;
@@ -31,6 +31,7 @@ function hostIdentity(){
 }
 function connected(r){
  token=r.token;globalThis.OnboardHandoffs?.refresh();
+ if(el('connection-panel'))el('connection-panel').open=false;
  if(el('code'))el('code').value='';
  if(el('allow-cloud')){el('allow-cloud').disabled=!r.cloud_available;el('allow-cloud').checked=!!r.cloud_available;text('cloud-destination',r.cloud_available?'Cloud destination: '+r.cloud_name+'. Only locally selected sources are sent.':'Configure GenAI and enable add-in cloud analysis in AI Settings to use it.');}
  text('status','Connected as '+r.account+'. No Onboard connection timeout.');el('submit').disabled=false;
@@ -72,6 +73,8 @@ async function selectedSources(){
     if(!capture.item.itemId)throw Error('Save this item before requesting its related thread through Graph.');
     sources.push({kind:capture.source.origin==='outlook-meeting'?'meeting':'mail',ref:Office.context.mailbox.convertToRestId(capture.item.itemId,Office.MailboxEnums.RestVersion.v2_0),include_thread:true});
    }
+  }else if(globalThis.OnboardActions?.active()){
+   sources.push(await OnboardActions.source());
   }else{
    const scope=await currentTeamsScope();
    if(el('teams-scope').value==='conversation')sources.push(scope);
@@ -89,6 +92,7 @@ async function selectedSources(){
  return sources;
 }
 function render(result){
+ globalThis.OnboardActions?.result(result);
  globalThis.OnboardMessages?.result(result,activeJob);globalThis.OnboardHandoffs?.result(result,activeJob);
  draftReady=result.status==='generated';draftItem=openedItem;updateDraftButton();
  text('status',result.message||result.status||'Complete');
@@ -122,7 +126,7 @@ el('submit').addEventListener('click',async()=>{
 });
 el('cancel').addEventListener('click',async()=>{generation++;globalThis.OnboardMessages?.reset();resetDraft();try{if(activeJob)await api('cancel',{id:activeJob});text('status','Request cancelled.');}catch(e){text('status',e.message);}activeJob='';el('cancel').disabled=true;el('submit').disabled=!token;});
 window.addEventListener('pagehide',()=>{globalThis.OnboardHandoffs?.disconnect();token='';generation++;connectionAttempt++;});
-function resetDraft(){globalThis.OnboardHandoffs?.reset();draftReady=false;draftItem=null;if(el('native-review'))el('native-review').checked=false;updateDraftButton();}
+function resetDraft(){globalThis.OnboardActions?.reset();globalThis.OnboardHandoffs?.reset();draftReady=false;draftItem=null;if(el('native-review'))el('native-review').checked=false;updateDraftButton();}
 function updateDraftButton(){if(el('native-draft'))el('native-draft').disabled=!draftReady||!el('native-review')?.checked;}
 function itemChanged(){
  const old=activeJob;generation++;activeJob='';openedItem=null;resetDraft();globalThis.OnboardMessages?.reset();
@@ -170,3 +174,14 @@ async function currentTeamsScopeForDraft(){
  if(now.user?.id!==context.user?.id||now.user?.tenant?.id!==context.user?.tenant?.id)throw Error('Teams account changed. Reconnect before opening a draft.');
 }
 init();
+
+// Shortcuts select an existing task; generation still requires the user's explicit Ask AI action.
+function updateQuickActions(){
+ document.querySelectorAll('[data-task]').forEach(button=>button.setAttribute('aria-pressed',String(button.dataset.task===el('task').value)));
+}
+document.querySelectorAll('[data-task]').forEach(button=>button.addEventListener('click',()=>{
+ el('task').value=button.dataset.task;el('task').dispatchEvent(new Event('change'));
+ el('ask-card').scrollIntoView({block:'start',behavior:'auto'});el('prompt').focus({preventScroll:true});
+}));
+el('task').addEventListener('change',updateQuickActions);updateQuickActions();
+document.querySelector('.settings-link')?.addEventListener('click',()=>{el('connection-panel').open=true;});
