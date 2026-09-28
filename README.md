@@ -53,7 +53,7 @@ Connect through **Connection → Connect to Onboard**, then approve in the nativ
 
 ## Validation and limitations
 
-The Azure pages match the deployed release bytes. Health succeeds, unauthenticated bot requests are rejected, and private files are not served. The 275 Python tests, 69 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt and installed with a verified ad hoc signature. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
+The Azure pages match the deployed release bytes. Health succeeds, unauthenticated bot requests are rejected, and private files are not served. The 276 Python tests, 69 JavaScript interface tests, nine Node handler/server tests and four Rust policy tests pass; the development Mac app rebuilt and installed with a verified ad hoc signature. [SETUP-VERIFICATION.md](SETUP-VERIFICATION.md) retains earlier setup evidence.
 
 Live Word insertion/attachment and Purview policy acceptance, authenticated Teams actions, a new end-to-end Outlook/Teams-to-local-AI session, second-machine acceptance, GenAI.mil integration and government authorization are not established by these deployment checks. No real messages were sent during this release update.
 
