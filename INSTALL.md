@@ -176,4 +176,9 @@ Reply text is now separate from expandable supporting sources. An explicit no-re
 
 ## September 28 add-in packages
 
-Use the repository-root Teams **0.4.2** package for the Azure commercial test, and Outlook **0.4.1.0** for local Outlook. Setup updates the native app but does not upload the Teams catalog package. See [ACCESS-SETUP.md](ACCESS-SETUP.md) for choosing the hosted origin, replacing an old personal Teams installation and using conversation actions.
+Use the repository-root Teams **0.4.2** package for the Azure commercial test, and Outlook **0.5.0.0** for local Outlook. Setup updates the native app but does not upload the Teams catalog package. See [ACCESS-SETUP.md](ACCESS-SETUP.md) for choosing the hosted origin, replacing an old personal Teams installation and using conversation actions.
+
+
+## Hybrid tasks and Word (0.5)
+
+After updating, quit and reopen Onboard to load the new task controls. Hybrid tools are off until enabled in AI Settings, with specific approved work folders and website hosts. Existing provider credentials and model/runtime assets are retained. See [HYBRID-WORD.md](HYBRID-WORD.md) for configuration, Word manifest installation, label handling and attaching created DOCX files in Outlook. A new Word add-in must be sideloaded or deployed by the tenant administrator; updating the desktop app does not add it to Word automatically.

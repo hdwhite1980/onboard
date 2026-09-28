@@ -213,3 +213,14 @@ The memory, temperature, monitoring, runtime and cleanup limits remain enforced.
 ## Teams message actions — inactive, organization hosting required
 
 The staged message-menu and compose-box code is retained for **Summarize**, **Suggest a reply**, and **Send to Outlook**. Netlify-specific function/deployment files have been removed. An optional organization-managed handler and real bot registration are required; no message content is sent to that handler by the current local-tab package. See [organization-hosted action setup](teams-actions/README.md). The handler currently authenticates commercial Bot Framework requests only; a government authority/tenant integration remains unimplemented and unverified.
+
+
+## Hybrid tasks and Word — September 28, 2026 (0.5)
+
+See [HYBRID-WORD.md](HYBRID-WORD.md) for the new desktop task mode, Word add-in, Purview metadata inspection and email-to-DOCX attachment workflow. Outlook and Word manifests are **0.5.0.0**; the Teams commercial catalog package remains **0.4.2**. The new source installer builds native app **0.5.0** and retains verified model/runtime files.
+
+These workflows are explicitly enabled: ordinary Ask AI keeps its existing routing, while hybrid tasks use the configured cloud planner and reviewed local tools. The document workflow can send the explicitly selected public source collection directly to the configured cloud provider and batch larger inputs. Earlier local-first add-in source-selection limits describe ordinary Ask AI, not this new, separately selected document workflow.
+
+No additional Graph permission is required for local DOCX generation or native Outlook attachment. Mailbox collection uses delegated `Mail.Read`; document/Teams source reads use their existing configured scopes. Onboard does not request `Mail.ReadWrite` to implement a native attachment. The current label inspection reads exposed metadata; it does not request a Purview catalog scope or grant MIP decryption rights.
+
+The Word pane connects through explicit native approval to the Onboard account shown to the user. Word SSO identity verification is not implemented. Files generated in Word can be attached from the Outlook document tray; feedback text goes through the local draft inbox. The user reviews and sends in Outlook. Only organization-approved PUBLIC labels may be mapped in the development policy; encrypted/unknown labels remain blocked. A customer rollout still needs authorized tenant policy and live acceptance.

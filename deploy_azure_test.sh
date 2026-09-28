@@ -13,7 +13,7 @@ test -f "$onboard_zip"
 python3 - "$onboard_zip" <<'PY'
 import hashlib, pathlib, sys
 p = pathlib.Path(sys.argv[1])
-expected = 'e052cdc212e875676b34a806c4d035b22794ffa1d9d51e3e71a08a5757e5c018'
+expected = '07b6079de0710aed5900b8c22c9c72615fb1ec4b8422f0d2f1c4d3b86630d987'
 if hashlib.sha256(p.read_bytes()).hexdigest() != expected:
     raise SystemExit('ZIP differs from the verified September 27 deployment package. Nothing deployed.')
 print('Deployment package verified.')

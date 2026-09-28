@@ -1,7 +1,7 @@
 {
   "releaseDate": "2026-09-28",
   "teamsVersion": "0.4.2",
-  "outlookVersion": "0.4.1.0",
+  "outlookVersion": "0.5.0.0",
   "teamsHostingBase": "https://onboard-teams-test-web-f3amchf5fwaeb7hj.westus3-01.azurewebsites.net",
   "outlookHostingBase": "https://localhost:38473",
   "azureVisualUpdateDeployed": true,
@@ -13,5 +13,14 @@
   "governmentTenantVerified": false,
   "netlifyRequired": false,
   "teamsRedesignedUIObserved": true,
-  "localServiceRestarted": true
+  "localServiceRestarted": true,
+  "nativeVersion": "0.5.0",
+  "wordVersion": "0.5.0.0",
+  "hybridTasksImplemented": true,
+  "wordManifestPrepared": true,
+  "wordLiveVerified": false,
+  "purviewTenantPolicyVerified": false,
+  "genAIMilVerified": false,
+  "hybridWordAzureDeployed": true,
+  "hybridWordAssetsVerified": 19
 }
