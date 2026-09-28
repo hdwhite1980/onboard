@@ -1,7 +1,15 @@
 {
-  "hostingBase": "https://localhost:38473",
-  "localDevelopmentOnly": true,
-  "schemas": "XML/JSON structure generated; Microsoft host validation pending",
-  "deployed": false,
-  "governmentTenantVerified": false
+  "releaseDate": "2026-09-28",
+  "teamsVersion": "0.4.2",
+  "outlookVersion": "0.4.1.0",
+  "teamsHostingBase": "https://onboard-teams-test-web-f3amchf5fwaeb7hj.westus3-01.azurewebsites.net",
+  "outlookHostingBase": "https://localhost:38473",
+  "azureVisualUpdateDeployed": true,
+  "teamsCatalogUpdated": true,
+  "teamsDesktopVersionVerified": true,
+  "teamsDesktopAzurePageLoaded": true,
+  "liveAuthenticatedMessageActionsVerified": false,
+  "localBridgeRequiresCertificateAndNativeApproval": true,
+  "governmentTenantVerified": false,
+  "netlifyRequired": false
 }

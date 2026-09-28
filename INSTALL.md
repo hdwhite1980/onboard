@@ -173,3 +173,7 @@ Tracking-link and standard footer text is omitted from email AI context, with or
 Run the latest **Setup.command**, then quit and reopen Onboard AI so the new native approval controls are loaded. Sign in to Microsoft 365 in AI Settings, reload the Outlook or Teams add-in, choose **Connect to Onboard**, and click **Allow connection** at the top of the Onboard window. No local connection code is required. Existing runtime/model files are reused. See ACCESS-SETUP.md for approval, reconnection and optional advanced-code behavior.
 
 Reply text is now separate from expandable supporting sources. An explicit no-reply notice produces advice rather than an invented reply. Requests to prepare a conversational draft no longer automatically request a meeting. Sending still requires recipient review and an explicit Send click.
+
+## September 28 add-in packages
+
+Use the repository-root Teams **0.4.2** package for the Azure commercial test, and Outlook **0.4.1.0** for local Outlook. Setup updates the native app but does not upload the Teams catalog package. See [ACCESS-SETUP.md](ACCESS-SETUP.md) for choosing the hosted origin, replacing an old personal Teams installation and using conversation actions.

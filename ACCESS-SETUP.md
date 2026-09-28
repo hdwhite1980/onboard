@@ -2,6 +2,18 @@
 
 Onboard should use the signed-in user's existing Microsoft 365 access. Microsoft Graph still requires an Entra application identity and consent for the permissions Onboard requests. With **delegated permissions**, effective access is limited by both the permissions approved for Onboard and what the signed-in user can access. An existing Teams or Outlook session alone does not authorize an arbitrary add-in to read the user's mailbox, files or conversations. See [Microsoft's permissions explanation](https://learn.microsoft.com/en-us/graph/permissions-overview).
 
+## Current commercial test release — September 28, 2026
+
+Use **Onboard-Teams.zip (0.4.2)** from the repository root for the current commercial test deployment. It is the same package as **Onboard-Teams-Actions.zip** and points to `https://onboard-teams-test-web-f3amchf5fwaeb7hj.westus3-01.azurewebsites.net`. The organization catalog and this Mac's personal installation were verified at 0.4.2. The old 0.3.1 Netlify installation has been removed. Outlook's local manifest is **outlook.xml (0.4.1.0)**. The source installer builds the latest native app and redesigned interfaces, reusing verified model/runtime files.
+
+The Outlook blue / Teams purple card interface is deployed to Azure. GitHub stores the release files and source; it does not serve the running interface. In **AI Settings → Add-in hosting**, choose **Organization-managed HTTPS host** and approve the exact Azure origin above for this commercial test. The local TLS certificate must also be trusted and the same Microsoft account signed in to Onboard. Click **Connection → Connect to Onboard**, then approve in the native app. No code is needed for this flow.
+
+To use Onboard in a conversation, open **Apps → Built for your org → Onboard AI** and choose the intended chat/channel. The package also declares **Summarize**, **Suggest a reply**, and **Send to Outlook** under message actions and the compose-box Apps menu. These use the Azure Bot handler; no ordinary @mention chat bot is implemented. A chat tab uses Graph to retrieve permitted messages; the message action uses the message explicitly selected in Teams. Full authenticated action/local-AI acceptance is still pending. The personal app is not itself a conversation tab.
+
+If Teams still shows Netlify or 0.3.1, remove its old **personal app** through **Apps → Manage your apps**, then add Onboard from **Built for your org**. Confirm **About → Version 0.4.2**. Do not install the local-only 0.4.1 package for this Azure action deployment. Hosting/certificate approval and commercial testing do not establish government authorization.
+
+See **AZURE-SETUP.md** in the release folder, or `product/integrated/teams-actions/AZURE-SETUP.md` inside the source archive, for hosting and bot configuration. The historical sections below describe earlier stages; this section defines the current package selection.
+
 ## What the current build actually supports
 
 This build uses a separate Microsoft device-code sign-in in the native app and an account-matched approval in the native app to connect each add-in to the local AI service (no typed connection code required). It does **not** yet implement Teams or Outlook single sign-on (SSO).
@@ -65,6 +77,22 @@ For Teams, configure an Entra registration and the app manifest for supported ho
 The local connection also needs an authenticated, user-approved binding. A display name, email address or Teams context object is not proof of identity and cannot safely replace the code on its own. The current same-account check is a consistency check; approval in the native app grants the connection. The optional legacy code grants the same limited session.
 
 The organization should configure IDs, approved permissions, host URLs, certificates and deployment once for its users. Users should not have to create their own app registration. This SSO and managed onboarding work remains to be implemented; it is not enabled by the Teams loading correction.
+
+## Local add-in hosting — September 27, 2026
+
+The local-only configuration uses `https://localhost:38473/outlook.html` and `https://localhost:38473/teams.html`, served by the installed Onboard app on this Mac. No Netlify page or handler is required. AI Settings defaults to **Add-in hosting → This Mac — local service**. This mode rejects all hosted origins even if a stale allowlist remains in a settings file.
+
+Deploy `build/addins/outlook.xml` (0.4.1.0) and `build/addins/Onboard-Teams.zip` (0.4.1). Update the existing Teams catalog app; do not create a duplicate. The old 0.3.1 hosted package is retired and must be replaced in the client. It can no longer connect to a service running in local hosting mode.
+
+The localhost certificate must be trusted through the test Mac's approved process; government endpoints need their organization's approved certificate deployment. Do not bypass TLS errors. Local hosting requires Onboard running on the same machine. Teams/Outlook client support, local-network permissions and organizational app policy must be verified on the target endpoint. This is not a claim of government authorization or mobile/remote-client support.
+
+**Organization-managed HTTPS host** remains an explicit alternative in AI Settings, requiring exact organization-approved origins and separately deployed manifests. It has no default vendor. The staged message-menu extension needs an approved reachable handler; it is not activated in the endpoint-only package. The existing Teams tab still offers summary, reply preparation, Graph selection and local Outlook draft transfer after connection is verified.
+
+### OpenAI now; GenAI.mil for the customer
+
+The current OpenAI endpoint, model, API key and processing settings are preserved for public-content development. In **AI Settings → Cloud AI provider**, the customer can enter the documented GenAI.mil endpoint, model/deployment, API format and credential. Changing the endpoint requires a credential for that destination instead of silently reusing the previous provider's key. The current adapters support bearer-authenticated Chat Completions or Azure deployment Chat Completions; a different GenAI.mil API protocol requires an adapter. Do not infer an API URL from the service's website or treat saving settings as a connectivity test. Confirm the actual API using permitted content before presenting it as working.
+
+Microsoft sign-in, proxy settings and the public-content development policy remain separate from provider selection. GenAI.mil selection does not by itself authorize CUI/FCI handling.
 
 ## Teams tab loading and HTTPS
 
@@ -180,3 +208,8 @@ A guard stop is not a summary. No partial model answer is released. The updated 
 The most recent supervised run leaves one private `product/integrated/state/last-local-run.json` record in the installed source workspace. It contains the outcome code, cleanup confirmation and numeric runtime measurements; it excludes prompts, email/Teams content, model output, account identifiers and raw exceptions. The next supervised run replaces it. Temporary request contents are still deleted after each request. This record is excluded from published source archives.
 
 The memory, temperature, monitoring, runtime and cleanup limits remain enforced. Native Ask AI may use configured and explicitly permitted cloud assistance after a clean resource or timeout stop. Add-in summarization still requires locally verified source selection before automatic cloud analysis; a failed local request does not silently send the email to a cloud provider.
+
+
+## Teams message actions — inactive, organization hosting required
+
+The staged message-menu and compose-box code is retained for **Summarize**, **Suggest a reply**, and **Send to Outlook**. Netlify-specific function/deployment files have been removed. An optional organization-managed handler and real bot registration are required; no message content is sent to that handler by the current local-tab package. See [organization-hosted action setup](teams-actions/README.md). The handler currently authenticates commercial Bot Framework requests only; a government authority/tenant integration remains unimplemented and unverified.
