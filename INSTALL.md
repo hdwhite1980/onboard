@@ -1,4 +1,4 @@
-> Current native/service release: 0.6.3 (add-ins 0.6.0). See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
+> Current native/service release: 0.7.0 (add-ins 0.6.0). See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
 
 # Install Onboard AI on another Mac
 
@@ -190,3 +190,7 @@ Browser/CAC sign-in: add the native desktop redirect `http://localhost/onboard-s
 ## Recovery from Swift settings type-check timeout
 
 Native 0.6.2 splits the settings expression into explicitly typed groups to avoid the Swift compiler timeout reported at App.swift:249. Download and extract the latest repository ZIP, then run `bash Setup.command` from that newly extracted folder. Do not delete `~/OnboardAI`, cached model/runtime files, settings, or Keychain entries. Setup detects the unfinished installation and reuses verified dependencies. Rust tests passing followed by this Swift error does not indicate a damaged model download.
+
+## Saved tasks and computer controls (0.7.0)
+
+See [TASK-CONTROLLERS.md](TASK-CONTROLLERS.md) for importing/running offline plans, optional cloud planning and repair, selecting approved apps/browser, and enabling macOS Accessibility. Controllers default off. Install/restart when ready to end your current session; source updates do not update a running app. Existing model/runtime downloads are reused.

@@ -250,3 +250,7 @@ The native app and add-in packages are versioned 0.6. Updating the local applica
 ## Memory pressure and cloud assistance (0.6.3)
 
 See [TURBOQUANT.md](TURBOQUANT.md) for the experimental local cache setting and permitted cloud handoff when local inference stops. Save settings after selecting a cache mode. Enable cloud processing, add-in cloud assistance, and the request-level cloud option to permit off-device analysis. No Entra permission changes are required for this release.
+
+## Saved tasks and computer controllers (0.7.0)
+
+Native Tasks now supports reviewed offline execution, durable checkpoints and explicit cloud-assisted repair. Optional browser/desktop controls require their own settings and macOS Accessibility permission; this does not add new Graph permissions or enable automation in add-ins. See [TASK-CONTROLLERS.md](TASK-CONTROLLERS.md). Add-in versions remain 0.6.0.

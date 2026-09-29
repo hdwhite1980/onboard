@@ -1,5 +1,5 @@
 {
-  "release": "0.6.3",
+  "release": "0.7.0",
   "nativeInstalled": false,
   "localServiceVerified": false,
   "modelReady": true,
@@ -9,11 +9,12 @@
   "genAIMilVerified": false,
   "governmentAuthorized": false,
   "tests": {
-    "python": 316,
+    "python": 337,
     "javascript": 75,
     "nodeServer": 9,
     "rust": 4,
-    "swiftCrypto": 4
+    "swiftCrypto": 4,
+    "savedTasksAndControllers": 21
   },
   "azureArchiveSHA256": "494771213f643a035c3825a73224c51987f31989b6f4a869bac0ba23cc7d9844",
   "pending": [
@@ -21,7 +22,9 @@
     "Customer endpoint and tenant selection",
     "GenAI.mil API contract and credentials",
     "Government control profile and authorization",
-    "Register desktop callback and verify actual browser/CAC sign-in"
+    "Register desktop callback and verify actual browser/CAC sign-in",
+    "Install native 0.7.0 when the owner is ready to end the existing session",
+    "Grant macOS Accessibility and verify live browser/desktop controls"
   ],
   "azureChecks": [
     {
@@ -186,5 +189,18 @@
     "persistentCacheReductionPercent": 60.9375,
     "wholeProcessMemoryImprovementEstablished": false,
     "liveCloudFallbackVerified": false
-  }
+  },
+  "taskControllers": {
+    "implemented": true,
+    "nativeUIAcceptance": false,
+    "defaultEnabled": false,
+    "savedTaskEncryption": "AES-256-GCM via native Keychain key",
+    "offlineTaskTests": "passed with isolated fixture files and mocked persistence codec",
+    "nativeCryptoChecks": "passed with ephemeral in-process key",
+    "desktopAndBrowserLiveActionsTested": false,
+    "nativeTestingBlocker": "Computer-use native connection unavailable in development session",
+    "installedOrRestartedDuringUpdate": false
+  },
+  "validationDate": "2026-09-29",
+  "unchangedWebTestsLastRun": "2026-09-28"
 }
