@@ -3,8 +3,8 @@
  let captured=null;
  function call(invoke){return new Promise((resolve,reject)=>{const timer=setTimeout(()=>reject(Error('Word did not respond.')),15000);try{invoke(r=>{clearTimeout(timer);r.status===Office.AsyncResultStatus.Succeeded?resolve(r.value):reject(Error(r.error?.message||'Word request failed.'));});}catch(error){clearTimeout(timer);reject(error);}});}
  async function initialize(){const info=await Office.onReady();if(info.host!=='Word')throw Error('Open this add-in inside Microsoft Word.');if(!root.Word?.run)throw Error('Word APIs are unavailable in this client.');}
- async function capture(){
-  captured=null;
+ async function capture(remember=true){
+  if(remember)captured=null;
   const before=await Word.run(async context=>{const body=context.document.body,selection=context.document.getSelection();body.load('text');selection.load('text');await context.sync();return {text:body.text,selection:selection.text,url:Office.context.document.url};});
   const file=await call(cb=>Office.context.document.getFileAsync(Office.FileType.Compressed,{sliceSize:65536},cb));
   try{
@@ -14,7 +14,8 @@
    const data=new Uint8Array(length);let offset=0;for(const chunk of chunks){data.set(chunk,offset);offset+=chunk.length;}
    let binary='';for(let i=0;i<data.length;i+=8192)binary+=String.fromCharCode(...data.subarray(i,i+8192));
    await Word.run(async context=>{const body=context.document.body;body.load('text');await context.sync();if(body.text!==before.text||Office.context.document.url!==before.url)throw Error('Document changed during capture. Inspect it again.');});
-   captured=before;return {file:btoa(binary),title:'Word document'};
+   if(!remember&&(!captured||before.text!==captured.text||before.url!==captured.url))throw Error('The document changed. Inspect it again before inserting.');
+   if(remember)captured=before;return {file:btoa(binary),title:'Word document'};
   }finally{await call(cb=>file.closeAsync(cb));}
  }
  async function insert(text,replaceSelection=false){
@@ -29,5 +30,5 @@
   });
   return 'Draft inserted in Word. Review it and save in Word. Inspect again before another AI edit.';
  }
- root.OnboardWord={initialize,capture,insert};
+ root.OnboardWord={initialize,capture,verify:()=>capture(false),insert};
 })(globalThis);
