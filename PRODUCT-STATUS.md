@@ -1,13 +1,12 @@
 # Onboard AI — product priorities and release status
 
-Authoritative integrated-product status · September 29, 2026 · native/service release 0.7.0; add-ins 0.6.0.
-Historical Sprint 0–3 research and earlier READMEs describe their dates, not current release authority or live acceptance. This document distinguishes shipped code, deployment, and customer verification.
+September 30, 2026 · native/service **0.7.3**, add-in packages **0.6.1**.
 
-Native 0.7.0 adds saved offline tasks, optional cloud planning/repair and reviewed desktop/browser controllers. See [setup and limits](TASK-CONTROLLERS.md). The existing running installation was preserved; native UI acceptance is pending.
+Native/service 0.7.3 is installed and verified on the development Mac, including the Activity interface and a real local model request. Matching source and installer files are prepared for distribution. Azure and the Teams catalog have not been updated by this release operation. See [RELEASE-0.7.3.md](RELEASE-0.7.3.md) for deployment boundaries and validation.
 
-Native 0.6.3 adds optional TurboQuant cache compression, bounded cloud assistance after clean local resource failures, and admission with stable existing swap. See [compression and offloading details](TURBOQUANT.md). All remain public-content development features.
+The [production/security review](PRODUCTION-READINESS-REVIEW.md) covers commercial M365, GCC High and DoD. [0.7.3 hardening](HARDENING-0.7.3.md) adds encrypted model scratch storage, worker isolation, central audit and signed-update paths, managed browser restrictions and Activity diagnostics. Protected-document lifecycle, trusted distribution, customer operations and live acceptance remain production gates.
 
-Native 0.6.2 was a build compatibility correction: settings groups are explicitly typed to prevent the Swift expression type-check timeout reported during setup on another Mac. Development-Mac build passes; rerun on the affected Mac remains required.
+Earlier releases introduced saved offline tasks, optional cloud planning/repair and reviewed desktop/browser controllers ([setup and limits](TASK-CONTROLLERS.md)), plus experimental TurboQuant cache compression and bounded cloud assistance ([compression and offloading](TURBOQUANT.md)). Broader controller workflows and installation on the second Mac still require live acceptance. Historical Sprint 0–3 research and build-time notes describe their dates; they do not establish current deployment or customer verification.
 
 ## Intended product
 
@@ -19,17 +18,17 @@ Application-first assistance in Outlook, Teams and Word; one local Onboard servi
 |---|---|---|
 | P0 | Preserve reviewed work across applications and restarts | 0.6 adds explicit encrypted Saved work in native, Outlook, Teams and Word. Account/cloud separation, seven-day expiry, deletion, source references and review reset are implemented. Original source bodies and active tool execution are not persisted. |
 | P0 | Prevent losing drafts when destination apps fail | Two-phase local handoff reserves a draft and removes it only after the host reports success. Host failure preserves text. An ambiguous interrupted opening requires checking the destination; it is never automatically resent. |
-| P0 | Consistent connection/capability status | Authenticated add-in diagnostics distinguish a running service, signed-in account, qualified model, configured provider and unverified live acceptance. Local service uses 0.7.0; unchanged add-in manifests remain 0.6.0. |
+| P0 | Consistent connection/capability status | Authenticated add-in diagnostics distinguish a running service, signed-in account, qualified model, configured provider and unverified live acceptance. Installed local service uses 0.7.3; prepared add-in packages use 0.6.1. The Teams catalog was last verified at 0.6.0. |
 | P0 | Current, truthful documentation | This file is authoritative. Historical baseline and earlier directions are marked accordingly. No mock or unit test is reported as live tenant validation. |
 | P1 | Administrator-controlled restrictions | Optional root-owned endpoint policy restricts tenant/provider selection, public label mappings, cloud, hybrid tasks and saved work. This is an MDM-deployable restriction file, not the complete signed central management plane. |
 | P1 | Complete real workflow acceptance | Prepared test procedure below. Actual Outlook→Word→Outlook and Teams handoffs, protected tenant labels, second-machine deployment and GenAI.mil are pending live acceptance. |
 | P1 | Simple identity and deployment | Native approval remains. 0.6.2 adds selected-browser PKCE sign-in, allowing tenant-provided CAC authentication; live CAC acceptance and host SSO, managed certificate deployment, trusted publisher signing/notarization and a binary customer installer remain open. |
-| P1 | Government target deployment | Commercial testing only. Government bot authorities, distribution and actual customer GenAI contract must be implemented/verified against the selected target. A provider name does not authorize protected-data processing. |
+| P1 | Government target deployment | Commercial testing only. Cloud-specific bot profiles exist; authorities, distribution and the actual customer GenAI contract still require validation against the selected target. A provider name does not authorize protected-data processing. |
 | P2 | Richer knowledge collection | Bounded Graph collection exists. Thread/attachment completeness, permission-aware indexing, source revalidation and better relevance evaluation remain open. Saved drafts are not a cache of continuing source access authority. |
-| P2 | Full protected-document lifecycle | Metadata detection exists. Rights-aware MIP integration, output-label/protection application and recipient rights evaluation remain open. No CUI/FCI mode enabled. |
+| P1 production gate | Full protected-document lifecycle | Metadata detection exists. Rights-aware MIP integration, output-label/protection application and recipient rights evaluation remain open. No CUI/FCI mode enabled. |
 | P2 | Broader agents and recovery | 0.7.0 implements reviewed macOS/browser controls and encrypted task checkpoints with explicit interrupted-action resolution. Native UI acceptance remains pending; screenshot/DOM controllers and action rollback remain open. See TASK-CONTROLLERS.md. |
 | P3 | Advanced application features | Word tracked edits/comments/template preservation; conversational Teams bot and transcript/action workflow; reviewed calendar scheduling; PDF/OCR then Excel/PowerPoint. Prioritize against the pilot user's actual tasks. |
-| P3 | Fleet operation | Central enrollment/policy signatures/revocation, content-free durable audit, update channels, Windows runtime qualification and support tooling remain open. |
+| P1 production gate | Fleet operation | Central mTLS audit tooling, signed-update verification and Activity diagnostics are implemented. Approved collector hosting, signing/notarization, enrollment, policy signatures/revocation and managed rollout remain open. Windows runtime qualification is a separate platform gate. |
 
 ## What 0.6 saves
 

@@ -1,4 +1,4 @@
-> Current native/service release: 0.7.0 (add-ins 0.6.0). See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
+> Current native/service release: 0.7.3 (add-ins 0.6.1). See PRODUCT-STATUS.md in the download for saved-work retention, administrator restrictions and outstanding customer qualifications.
 
 # Install Onboard AI on another Mac
 

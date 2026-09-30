@@ -1,206 +1,39 @@
 {
-  "release": "0.7.0",
-  "nativeInstalled": false,
-  "localServiceVerified": false,
+  "release": "0.7.3",
+  "addinRelease": "0.6.1",
+  "validationDate": "2026-09-30",
+  "nativeInstalled": true,
+  "installedNativeRelease": "0.7.3",
+  "runningServiceRelease": "0.7.3",
+  "localServiceVerified": true,
+  "installedLocalGenerationVerified": true,
+  "activityUIVerified": true,
+  "settingsPreserved": true,
   "modelReady": true,
-  "azureDeployed": true,
-  "teamsCatalogUpdated": true,
+  "azureDeployedForThisRelease": false,
+  "teamsCatalogUpdatedForThisRelease": false,
+  "azureArchiveSHA256": "59783db4e6786cb3f8a32379f5f48c0e3f12b62b3f49eb7073c40ca51178e67e",
+  "teamsCatalogLastVerifiedVersion": "0.6.0",
   "liveOfficeAcceptance": false,
   "genAIMilVerified": false,
   "governmentAuthorized": false,
+  "protectedMIPImplemented": false,
+  "notarized": false,
   "tests": {
-    "python": 337,
-    "javascript": 75,
-    "nodeServer": 9,
+    "python": 377,
+    "javascript": 77,
+    "nodeServer": 11,
     "rust": 4,
-    "swiftCrypto": 4,
-    "savedTasksAndControllers": 21
+    "osAndMTLS": 8,
+    "nativeIdentity": 6
   },
-  "azureArchiveSHA256": "494771213f643a035c3825a73224c51987f31989b6f4a869bac0ba23cc7d9844",
   "pending": [
-    "Live Office workflow acceptance",
-    "Customer endpoint and tenant selection",
-    "GenAI.mil API contract and credentials",
-    "Government control profile and authorization",
-    "Register desktop callback and verify actual browser/CAC sign-in",
-    "Install native 0.7.0 when the owner is ready to end the existing session",
-    "Grant macOS Accessibility and verify live browser/desktop controls"
-  ],
-  "azureChecks": [
-    {
-      "path": "word-host.js",
-      "status": 200,
-      "match": true,
-      "sha256": "dd21c8a11c760795e1f3accfde73b7a1a94c7fac57dffc286a5742057fe44d1b"
-    },
-    {
-      "path": "workspace-ui.js",
-      "status": 200,
-      "match": true,
-      "sha256": "37166b8cea9e6f8a48b0cfe6ef61c118bee2a206fee5a1991c5a6452d000e105"
-    },
-    {
-      "path": "teams-host.js",
-      "status": 200,
-      "match": true,
-      "sha256": "eef70eb2c4f8c89132e4edd89a5c2c3bc5c19384604e7454e4a2525f178eebed"
-    },
-    {
-      "path": "icon-192.png",
-      "status": 200,
-      "match": true,
-      "sha256": "bfa3be0f51d992fe9c796740bc322f57930c5d43d62c3be4b80d6b58ad66b636"
-    },
-    {
-      "path": "labels.js",
-      "status": 200,
-      "match": true,
-      "sha256": "1e4a4c4d64101d3ec2c279c9c3dc9c91c90e4631e5edf6c63dbc4d9b9d7630cf"
-    },
-    {
-      "path": "word.html",
-      "status": 200,
-      "match": true,
-      "sha256": "c75ff00165535d01d4e67f99a845b452669563c063a4b4f5bfe097023d1d24dc"
-    },
-    {
-      "path": "icon-80.png",
-      "status": 200,
-      "match": true,
-      "sha256": "aad789029d60dba78cc04d4f8eadc4567d38c44a5a93e9be0c89ab8db2cb2757"
-    },
-    {
-      "path": "outline-32.png",
-      "status": 200,
-      "match": true,
-      "sha256": "e9bd251f6f8d6879ce595b25a4d2db7309ebe7311843aa3788dc881b6d212c19"
-    },
-    {
-      "path": "teams.html",
-      "status": 200,
-      "match": true,
-      "sha256": "a059d2b974a60f733250839419880da9336973432941dbe8032b1827950ef02b"
-    },
-    {
-      "path": "handoffs.js",
-      "status": 200,
-      "match": true,
-      "sha256": "8441580431f5c6ee48636e7d0f7d167552e3beaaa1b3f05dc632dc24e34bd4ef"
-    },
-    {
-      "path": "outlook-host.js",
-      "status": 200,
-      "match": true,
-      "sha256": "70ebae0ab5e791d4b6cc959b5a7d7c1f774f3ac844273622fd4ceaab16a89f4f"
-    },
-    {
-      "path": "teams-actions.js",
-      "status": 200,
-      "match": true,
-      "sha256": "a4b3649238f38d2419081d7e710470c21ecafcec04fe58ff825b275463b48afd"
-    },
-    {
-      "path": "outlook.html",
-      "status": 200,
-      "match": true,
-      "sha256": "0fb920185584ea0a48db296da912e45c818fac3bed1977574225cc23501f2127"
-    },
-    {
-      "path": "style.css",
-      "status": 200,
-      "match": true,
-      "sha256": "8cec1aa5d6964bf10c9d09f306e2810c2d3dd0d79c6f0eced90ff3aee05bbb90"
-    },
-    {
-      "path": "word.js",
-      "status": 200,
-      "match": true,
-      "sha256": "48556d7a996099554731355c25755b85955b1984c7c77f33fdec448490d0c309"
-    },
-    {
-      "path": "document-ui.js",
-      "status": 200,
-      "match": true,
-      "sha256": "fa2986105e04239daa642c79fac0284c0e252102a7b16a9238a71ae397be96d6"
-    },
-    {
-      "path": "teams-actions-config.js",
-      "status": 200,
-      "match": true,
-      "sha256": "df340c6a18f324fdca5f11986f2a2d9167eeee44509a106212c9ebfc634c83e9"
-    },
-    {
-      "path": "messages.js",
-      "status": 200,
-      "match": true,
-      "sha256": "d5f0b89dadd9a503142270f9292edc26040ed4a0eb9178a0e73aab15eafce325"
-    },
-    {
-      "path": "icon-32.png",
-      "status": 200,
-      "match": true,
-      "sha256": "a8aa5b6c4f28e2d60434c52583ce44202b1f21deb4eada6ae02f2acccf1c2326"
-    },
-    {
-      "path": "app.js",
-      "status": 200,
-      "match": true,
-      "sha256": "825b2fecbc2a74e0724559002405b6e83543ee49620072114d61b3d249afe661"
-    },
-    {
-      "path": "/healthz",
-      "status": 200,
-      "match": true
-    },
-    {
-      "path": "/.env",
-      "status": 404,
-      "match": true
-    },
-    {
-      "path": "/server.mjs",
-      "status": 404,
-      "match": true
-    },
-    {
-      "path": "/api/teams/actions",
-      "status": 401,
-      "match": true
-    }
-  ],
-  "teamsCatalogPublishedVersion": "0.6.0",
-  "teamsClientAcceptance": false,
-  "addinRelease": "0.6.0",
-  "browserSignInImplemented": true,
-  "liveCACVerified": false,
-  "swiftSettingsBuildFix": {
-    "developmentMacBuild": "passed",
-    "affectedMacBuild": "pending user rerun"
-  },
-  "installedNativeRelease": "0.6.2",
-  "runningServiceRelease": "0.6.2",
-  "turboquant": {
-    "implemented": true,
-    "default": "standard",
-    "mode": "turboquant-k8v4",
-    "experimental": true,
-    "realModelRuns": 6,
-    "cleanupConfirmed": true,
-    "persistentCacheReductionPercent": 60.9375,
-    "wholeProcessMemoryImprovementEstablished": false,
-    "liveCloudFallbackVerified": false
-  },
-  "taskControllers": {
-    "implemented": true,
-    "nativeUIAcceptance": false,
-    "defaultEnabled": false,
-    "savedTaskEncryption": "AES-256-GCM via native Keychain key",
-    "offlineTaskTests": "passed with isolated fixture files and mocked persistence codec",
-    "nativeCryptoChecks": "passed with ephemeral in-process key",
-    "desktopAndBrowserLiveActionsTested": false,
-    "nativeTestingBlocker": "Computer-use native connection unavailable in development session",
-    "installedOrRestartedDuringUpdate": false
-  },
-  "validationDate": "2026-09-29",
-  "unchangedWebTestsLastRun": "2026-09-28"
+    "Deploy updated hosted assets and handler to the approved Azure host",
+    "Upload/validate Teams 0.6.1 in the tenant catalog",
+    "Live Outlook/Teams/Word workflow acceptance",
+    "MIP SDK rights and output-protection implementation plus tenant consent/validation",
+    "Developer ID Application signing and notarization enrollment",
+    "Approved central audit host and browser network controls",
+    "Managed runtime distribution and government authorization"
+  ]
 }

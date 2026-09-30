@@ -22,3 +22,8 @@ All fields below are required. Empty allowlists allow no configured value in tha
 Policy is re-read on operations and hybrid steps; malformed/untrusted/unreadable policy blocks processing. A conflicting configuration must be repaired in Settings. Status, stop, sign-out and saved-work deletion remain available where the account can be authenticated. An already dispatched network request cannot be recalled. Removing the file by an administrator returns this development build to its public-content development settings.
 
 This is a local, administrator-owned restriction mechanism. It is **not** centrally signed policy, anti-rollback, fleet enrollment, a remote revocation guarantee, a tamper-resistant boundary against a host administrator, or government authorization. The source development installation also does not protect its executable code from modification by its owner. A customer-managed signed application and actual control-plane design are subsequent work.
+
+
+## 0.7.3 controls
+
+Managed builds now require a central audit collector and block browser computer control unless real external browser network restrictions are declared by administrator policy. Labeled content remains blocked pending a validated MIP rights/output path. See [the 0.7.3 enrollment instructions](HARDENING-0.7.3.md). Existing development configurations do not implicitly enroll in a collector or enable protected data.

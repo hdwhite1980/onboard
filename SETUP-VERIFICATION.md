@@ -1,3 +1,7 @@
+## September 30, 2026 update
+
+Native 0.7.3 was installed over 0.6.2 on the development Mac with backup retention. Startup, Activity UI and a real installed local-model request passed. Source archive inventory and release checksums were verified. Second physical Mac acceptance is still pending. Earlier records below describe earlier releases.
+
 # Development setup verification — September 24, 2026
 
 A separate source extraction and installation folder on the existing development Mac was used; the original installed app and its account state were not replaced.

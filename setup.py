@@ -26,6 +26,8 @@ def extract(source,destination):
             if not marker.is_file() or marker.is_symlink():raise RuntimeError('This folder is not a managed Onboard installation. Choose its original installation folder with --destination.')
             previous={row['path']:row for row in json.loads(marker.read_text())['files']}
         # Validate every existing target before changing anything; retain local modifications.
+        history=destination/'setup-history'
+        if history.is_symlink() or (history.exists() and not history.is_dir()):raise RuntimeError('Unsafe setup-history folder. Existing installation was preserved.')
         for member in z.infolist():
             target=destination/member.filename
             if target.is_symlink() or not target.resolve().is_relative_to(destination.resolve()):raise RuntimeError('Source target escapes installation folder')
@@ -40,7 +42,9 @@ def extract(source,destination):
             if target.exists() and target.read_bytes()==data:continue
             if target.exists():
                 if backup is None:
-                    backup=destination/'setup-history'/datetime.datetime.now(datetime.timezone.utc).strftime('%Y%m%dT%H%M%S%fZ')
+                    history.mkdir(mode=0o700,exist_ok=True)
+                    if history.is_symlink() or not history.resolve().is_relative_to(destination.resolve()):raise RuntimeError('Unsafe setup-history folder.')
+                    backup=pathlib.Path(tempfile.mkdtemp(prefix='update-',dir=history))
                 old=backup/member.filename;old.parent.mkdir(parents=True,exist_ok=True);shutil.copyfile(target,old)
             target.parent.mkdir(parents=True,exist_ok=True,mode=0o700)
             fd,temporary=tempfile.mkstemp(prefix='.onboard-source-',dir=target.parent)

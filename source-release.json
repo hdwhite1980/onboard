@@ -1,8 +1,8 @@
 {
   "archive": "Onboard-Source.zip",
-  "sha256": "11e4d2963bc66a9698cc2757daa3532c22e45142e98bce6fcf716415c929769f",
-  "bytes": 8490345,
-  "sourceFiles": 401,
+  "sha256": "e76da6aae5058e3afc069727ebdb0ade0eb1a080284d8c35a8879cc89dc253b2",
+  "bytes": 8553379,
+  "sourceFiles": 425,
   "model": "mlx-community/Qwen3-1.7B-4bit",
   "modelRevision": "3b1b1768f8f8cf8351c712464f906e86c2b8269e",
   "modelManifestSHA256": "1721e23c79d4367cb3e12a6811aabd61a8526c511b0f30f7134ecaeb40ef0778",
@@ -13,5 +13,5 @@
   ],
   "downloadBytes": 1415956899,
   "installerKind": "Development source installer, not notarized",
-  "validation": "Fresh-path setup/build on development Mac passed with verified cached large assets; small real publisher download passed. Second physical Mac acceptance pending."
+  "validation": "Source bundle integrity is verified separately; this release still requires source-installer acceptance on a second physical Mac."
 }
